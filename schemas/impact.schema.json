@@ -1,0 +1,42 @@
+{
+  "title": "Recherche d'impact pour la rétrospective ai-yearly",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["topics", "notes"],
+  "properties": {
+    "topics": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["topic", "category", "when", "initial_perception", "hype", "actual_impact", "impact", "verdict", "evidence"],
+        "properties": {
+          "topic": {"type": "string", "description": "Nom court du sujet, en français"},
+          "category": {"type": "string", "enum": ["modeles", "hardware", "logiciel", "societes", "recherche", "regulation", "usages"]},
+          "when": {"type": "string", "description": "Mois ou période de l'année, ex. 2026-03"},
+          "initial_perception": {"type": "string", "description": "Comment le sujet a été perçu sur le moment (2 à 3 phrases)"},
+          "hype": {"type": "integer", "description": "Bruit au moment de l'annonce, 1 (passé inaperçu) à 5 (omniprésent)"},
+          "actual_impact": {"type": "string", "description": "Impact constaté à ce jour, avec chiffres (3 à 5 phrases)"},
+          "impact": {"type": "integer", "description": "Impact constaté, 1 (négligeable) à 5 (transformateur)"},
+          "verdict": {"type": "string", "enum": ["surestime", "sous-estime", "conforme", "trop-tot"]},
+          "evidence": {
+            "type": "array",
+            "items": {
+              "type": "object",
+              "additionalProperties": false,
+              "required": ["claim", "url", "source", "date", "role"],
+              "properties": {
+                "claim": {"type": "string", "description": "Ce que cette source établit"},
+                "url": {"type": "string"},
+                "source": {"type": "string"},
+                "date": {"type": "string", "description": "AAAA-MM-JJ"},
+                "role": {"type": "string", "enum": ["perception", "impact"]}
+              }
+            }
+          }
+        }
+      }
+    },
+    "notes": {"type": "string"}
+  }
+}

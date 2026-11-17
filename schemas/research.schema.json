@@ -1,0 +1,28 @@
+{
+  "title": "Recherche d'actualités ai-weekly",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["items", "notes"],
+  "properties": {
+    "items": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["title", "summary", "category", "kind", "date", "source", "url", "other_urls", "importance"],
+        "properties": {
+          "title": {"type": "string", "description": "Titre court en français, reformulé"},
+          "summary": {"type": "string", "description": "2 à 4 phrases factuelles en français"},
+          "category": {"type": "string", "enum": ["modeles", "hardware", "logiciel", "societes", "recherche", "regulation", "usages"]},
+          "kind": {"type": "string", "enum": ["fait", "annonce", "rumeur", "analyse"]},
+          "date": {"type": "string", "description": "AAAA-MM-JJ"},
+          "source": {"type": "string", "description": "Nom du média ou de l'éditeur"},
+          "url": {"type": "string", "description": "Source la plus primaire, page vue pendant la recherche"},
+          "other_urls": {"type": "array", "items": {"type": "string"}, "description": "0 à 3 sources complémentaires"},
+          "importance": {"type": "integer", "description": "1 (anecdotique) à 5 (majeur)"}
+        }
+      }
+    },
+    "notes": {"type": "string", "description": "Remarques sur la recherche : zones mal couvertes, doutes"}
+  }
+}
