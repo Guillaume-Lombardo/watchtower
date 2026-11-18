@@ -76,6 +76,20 @@ class PublishTests(unittest.TestCase):
                          "docs(weekly): ai-weekly 2026-11-23")
         self.assertEqual(wt.main(["due", "--today", "2026-11-25"]), 0)  # RIEN À FAIRE
 
+    def test_local_change_to_a_published_edition_blocks_the_push(self):
+        self.assertEqual(wt.main(["due", "--today", "2026-11-23"]), 0)
+        published = self.root / "weekly/2026-11-23_ai-weekly.md"
+        published.write_text("réécrit\n")
+        sh(self.root, "git", "commit", "-qam", "réécriture")
+        self.assertEqual(wt.main(["due", "--today", "2026-11-30"]), 1)
+        self.assertFalse(self.on_origin("weekly/2026-11-30_ai-weekly.md"))
+
+    def test_dirty_index_after_a_failed_commit_is_resumed(self):
+        self.assertEqual(wt.main(["due", "--today", "2026-11-23", "--no-push"]), 0)
+        sh(self.root, "git", "add", "weekly", "raw")  # commit jamais fait
+        self.assertEqual(wt.main(["due", "--today", "2026-11-24"]), 0)
+        self.assertTrue(self.on_origin("weekly/2026-11-23_ai-weekly.md"))
+
     def test_local_commit_outside_editions_blocks_the_push(self):
         (self.root / "README.md").write_text("local\n")
         sh(self.root, "git", "add", "README.md")

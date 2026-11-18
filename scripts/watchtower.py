@@ -59,7 +59,7 @@ PROVIDERS = ("codex", "claude")
 RESEARCH_TIMEOUT = 60 * 60
 SYNTHESIS_TIMEOUT = 30 * 60
 # Budget total d'un passage `due` : la tâche planifiée l'attend au plus 2 h.
-RUN_BUDGET = 110 * 60
+RUN_BUDGET = 100 * 60
 GIT_TIMEOUT = 5 * 60
 # Chemins qu'un passage a le droit de pousser sur main.
 PUBLISHABLE = ("weekly/", "monthly/", "yearly/", "raw/")
@@ -383,10 +383,11 @@ def normalize_url(url: str) -> str:
 # Métadonnées de publication d'abord ; les balises génériques (souvent la date de mise à jour) ensuite.
 PUBLISHED_META = re.compile(
     r"""<meta[^>]+(?:property|name|itemprop)\s*=\s*["'](?:article:published_time|og:published_time|"""
-    r"""datePublished|parsely-pub-date|citation_publication_date)["'][^>]*>""", re.I)
+    r"""datePublished|pubdate|publish[-_]date|parsely-pub-date|DC\.date\.issued|citation_publication_date)"""
+    r"""["'][^>]*>""", re.I)
 OTHER_DATE_META = re.compile(
-    r"""<meta[^>]+(?:property|name|itemprop)\s*=\s*["'](?:date|pubdate|publish[-_]date|sailthru\.date|"""
-    r"""dc\.date|dcterms\.date|DC\.date\.issued|citation_date)["'][^>]*>""", re.I)
+    r"""<meta[^>]+(?:property|name|itemprop)\s*=\s*["'](?:date|sailthru\.date|dc\.date|dcterms\.date|"""
+    r"""citation_date)["'][^>]*>""", re.I)
 CONTENT_ATTR = re.compile(r"""content\s*=\s*["']([^"']+)["']""", re.I)
 JSONLD_DATE = re.compile(r'"datePublished"\s*:\s*"([^"]+)"')
 ISO_DAY = re.compile(r"(\d{4})[-/](\d{2})[-/](\d{2})")
@@ -521,7 +522,9 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
                 reason = f"page datée du {c.get('page_date')}, hors période"
             else:
                 reason = "aucun lien"
-        elif claimed and not in_window(claimed, start, end, before=0, after=1):
+        elif not claimed:
+            reason = f"date annoncée illisible ({item.get('date')!r})"
+        elif not in_window(claimed, start, end, before=0, after=1):
             reason = f"date annoncée {claimed}, hors période"
         if reason:
             rejected.append({"found_by": provider, "title": item.get("title"), "url": url, "reason": reason})
@@ -569,18 +572,22 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
 
 def validate_impact(results: dict[str, dict], start: dt.date, end: dt.date) -> tuple[list[dict], list[dict], dict]:
     """Vérifie les preuves de la recherche d'impact ; un sujet sans preuve valide est écarté."""
+    def dicts(values) -> list[dict]:
+        return [v for v in values if isinstance(v, dict)] if isinstance(values, list) else []
+
     urls = {str(ev.get("url", "")).strip() for data in results.values()
-            for t in data.get("topics", []) for ev in t.get("evidence", [])}
+            for t in dicts(data.get("topics")) for ev in dicts(t.get("evidence"))}
     checks = check_urls({u for u in urls if u})
     kept, rejected = [], []
     for provider, data in results.items():
-        for topic in data.get("topics", []):
+        for topic in dicts(data.get("topics")):
             evidence = []
-            for ev in topic.get("evidence", []):
+            for ev in dicts(topic.get("evidence")):
                 c = checks.get(str(ev.get("url", "")).strip())
-                if (c and c["verdict"] != "dead"
+                claimed = parse_day(str(ev.get("date", "")))
+                if (c and c["verdict"] != "dead" and claimed
                         and in_window(parse_day(c["page_date"] or ""), start, end, before=60, after=1)
-                        and in_window(parse_day(str(ev.get("date", ""))), start, end, before=60, after=1)):
+                        and in_window(claimed, start, end, before=60, after=1)):
                     evidence.append({**ev, "link_check": c["verdict"]})
             # Un verdict d'impact sans preuve d'impact valide n'est pas étayé.
             if any(ev.get("role") == "impact" for ev in evidence):
@@ -604,10 +611,13 @@ URL_TOKEN = re.compile(r"""https?://[^\s<>"'\[\]]+""")
 def markdown_urls(md: str) -> list[str]:
     """Toutes les URL du texte, quelle que soit leur forme (lien, lien avec titre, autolien, URL nue)."""
     urls = []
-    for token in URL_TOKEN.findall(md):
-        token = token.rstrip(".,;:!?*_")
+    for m in URL_TOKEN.finditer(md):
+        token = m.group(0)
+        # La ponctuation finale fait partie de la destination d'un lien `](…)`, pas d'une URL nue.
+        punct = "" if md[max(0, m.start() - 2):m.start()] == "](" else ".,;:!?*_"
+        token = token.rstrip(punct)
         while token.endswith(")") and token.count(")") > token.count("("):  # parenthèse du markdown
-            token = token[:-1].rstrip(".,;:!?*_")
+            token = token[:-1].rstrip(punct)
         urls.append(token)
     return urls
 
@@ -717,9 +727,16 @@ def method_section(ed: Edition, stats_by_step: dict[str, dict], writer: str, mis
     return "\n".join(lines) + "\n"
 
 
-def save_json(path: Path, data) -> None:
+def write_atomic(path: Path, text: str) -> None:
+    """Écrit puis renomme : un passage interrompu ne laisse pas de fichier tronqué à publier."""
     path.parent.mkdir(parents=True, exist_ok=True)
-    path.write_text(json.dumps(data, ensure_ascii=False, indent=2) + "\n", encoding="utf-8")
+    tmp = path.with_name(f".{path.name}.tmp")
+    tmp.write_text(text, encoding="utf-8")
+    os.replace(tmp, path)
+
+
+def save_json(path: Path, data) -> None:
+    write_atomic(path, json.dumps(data, ensure_ascii=False, indent=2) + "\n")
 
 
 def pick_providers(requested: list[str]) -> tuple[list[str], list[str]]:
@@ -761,8 +778,7 @@ def build_weekly(ed: Edition, workdir: Path, providers: list[str], missing: list
     body, writer = synthesize(synth_prompt, workdir, "synthesis", providers, allowed)
     text = (header(ed, f"ai-weekly du {fr_date(ed.published)}", f"Semaine {fr_range(ed.start, ed.end)}")
             + body.strip() + "\n" + method_section(ed, {"Recherches": stats}, writer, missing + failed))
-    ed.path.parent.mkdir(parents=True, exist_ok=True)
-    ed.path.write_text(text, encoding="utf-8")
+    write_atomic(ed.path, text)
     return [ed.path, ed.raw_dir]
 
 
@@ -804,8 +820,7 @@ def build_monthly(ed: Edition, workdir: Path, providers: list[str], missing: lis
         "gaps": [[s.isoformat(), e.isoformat()] for s, e in gaps]})
     text = (header(ed, f"ai-monthly — {month}", f"Synthèse du mois, publiée le {fr_date(ed.published)}")
             + body.strip() + "\n" + method_section(ed, stats_by_step, writer, missing + failed, extra))
-    ed.path.parent.mkdir(parents=True, exist_ok=True)
-    ed.path.write_text(text, encoding="utf-8")
+    write_atomic(ed.path, text)
     return [ed.path, ed.raw_dir]
 
 
@@ -847,8 +862,7 @@ def build_yearly(ed: Edition, workdir: Path, providers: list[str], missing: list
     text = (header(ed, f"ai-yearly — rétrospective {ed.published.year}",
                    f"L'année {ed.published.year} en IA, publiée le {fr_date(ed.published)}")
             + body.strip() + "\n" + method_section(ed, {"Recherche d'impact": stats}, writer, missing + failed, extra))
-    ed.path.parent.mkdir(parents=True, exist_ok=True)
-    ed.path.write_text(text, encoding="utf-8")
+    write_atomic(ed.path, text)
     return [ed.path, ed.raw_dir]
 
 
@@ -857,7 +871,7 @@ BUILDERS = {"weekly": build_weekly, "monthly": build_monthly, "yearly": build_ye
 
 def pull_rebase() -> None:
     try:
-        git("pull", "--rebase", "origin", "main")
+        git("pull", "--rebase", "--autostash", "origin", "main")
     except PipelineError:
         git("rebase", "--abort", check=False)
         raise
@@ -876,10 +890,11 @@ def publish(ed: Edition, paths: list[Path]) -> None:
     if git("diff", "--cached", "--name-only", "--", *rel):
         git("commit", "-m", f"docs({ed.kind}): {ed.name} {ed.published.isoformat()}", "--", *rel)
     pull_rebase()
-    outgoing = git("diff", "--name-only", "origin/main", "HEAD").splitlines()
-    foreign = [p for p in outgoing if not p.startswith(PUBLISHABLE)]
+    # Chaque commit sortant ne doit qu'ajouter des fichiers d'édition : rien d'autre ne part sur main.
+    changes = git("log", "--name-status", "--format=", "origin/main..HEAD").splitlines()
+    foreign = [c for c in changes if c.strip() and not (c.startswith("A\t") and c[2:].startswith(PUBLISHABLE))]
     if foreign:
-        raise PipelineError(f"commits locaux hors éditions ({', '.join(foreign[:5])}) : publication refusée")
+        raise PipelineError(f"commits locaux hors ajout d'éditions ({'; '.join(foreign[:5])}) : publication refusée")
     if git("rev-list", "origin/main..HEAD"):
         git("push", "origin", "HEAD:main")
     log(f"publié : {REPO_URL}/blob/main/{ed.path.relative_to(ROOT)}")
