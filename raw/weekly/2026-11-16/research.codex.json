@@ -1,0 +1,384 @@
+{
+  "items": [
+    {
+      "title": "Anthropic lance Fable 5.2 et Mythos 5.2",
+      "summary": "Anthropic commercialise deux variantes d’un même modèle, avec des protections renforcées en cybersécurité et biologie pour Fable et un accès sur vérification pour Mythos. Le tarif passe à 8 dollars par million de tokens entrants et 40 dollars sortants. L’entreprise annonce une génération jusqu’à 30 % plus rapide que les versions 5.1.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-09",
+      "source": "Anthropic",
+      "url": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+      "other_urls": [],
+      "importance": 5
+    },
+    {
+      "title": "Google élargit l’accès à Gemini 4 Carbon",
+      "summary": "Initialement réservé à certains acteurs de la cybersécurité, Carbon devient accessible aux développeurs et entreprises payants ainsi qu’aux abonnés Google AI Ultra. Le prix introductif est de 2 dollars par million de tokens entrants et 10 dollars sortants. Google prévoit ensuite 4 et 20 dollars après la période promotionnelle se terminant le 30 novembre.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "Google",
+      "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-carbon-now-available/",
+      "other_urls": [],
+      "importance": 5
+    },
+    {
+      "title": "Gemini 4 Hydrogen privilégie la vitesse d’exécution",
+      "summary": "Google lance Hydrogen pour le développement logiciel et les tâches d’agents courantes, avec un contexte d’un million de tokens. Le modèle coûte 1,50 dollar par million de tokens entrants et 7,50 dollars sortants sur toute cette fenêtre. Google rapporte un score de 51 à l’Intelligence Index d’Artificial Analysis au réglage par défaut, contre 50 pour Argon.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-12",
+      "source": "Google",
+      "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-hydrogen/",
+      "other_urls": [
+        "https://arstechnica.com/google/2026/11/google-rolls-out-gemini-4-hydrogen-finally-replacing-3-8-flash/",
+        "https://www.infoworld.com/article/4248403/google-adds-multi-model-orchestrator-gemini-4-hydrogen-to-antigravity.html"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Meta positionne Muse Ember sur les agents à bas coût",
+      "summary": "Muse Ember accepte texte, images, audio et vidéo, avec un contexte d’un million de tokens et jusqu’à 512 000 tokens de sortie. Le tarif démarre à 0,10 dollar par million de tokens entrants et 0,50 dollar sortant pour les requêtes allant jusqu’à 200 000 tokens ; ces prix sont triplés au-delà. Le modèle est disponible dans Muse Code et l’API de Meta.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-09",
+      "source": "Meta",
+      "url": "https://research.meta.ai/blog/muse-ember",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "Alibaba ouvre une préversion de Qwen4-Max",
+      "summary": "Qwen4-Max-Preview devient accessible exclusivement par les abonnements Token Plan Personal et Team, sans facturation à l’usage. Le modèle comprend texte, images et vidéo, avec un contexte d’un million de tokens et un budget de sortie de 393 216 tokens partagé entre raisonnement et réponse. Alibaba annonce une fenêtre de préversion du 11 au 25 novembre.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-11",
+      "source": "Alibaba Cloud",
+      "url": "https://docs.modelstudio.console.alibabacloud.com/en/model-studio/qwen4-max-preview",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "MiniMax publie les poids de H3-Image",
+      "summary": "MiniMax lance un modèle réunissant génération d’images et édition à partir de références. H3-Image accepte jusqu’à 16 images de référence et produit des images de 4 096 × 4 096 pixels. MiniMax annonce moins de dix secondes pour une génération 4K et met les poids à disposition.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-11",
+      "source": "MiniMax",
+      "url": "https://www.minimax.io/blog/minimax-h3-image",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "Google propose un modèle spécialisé dans les décisions",
+      "summary": "Gemini Decision 1 évalue des choix prédéfinis en un seul passage plutôt que de générer une réponse token par token. L’API accepte jusqu’à 1 000 questions indépendantes sur une entrée multimodale de 256 000 tokens. Google annonce une latence de 150 à 250 millisecondes et un prix de 0,10 dollar par million de tokens entrants, sans facturation de sortie.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-11",
+      "source": "Google",
+      "url": "https://blog.google/innovation-and-ai/technology/developers-tools/gemini-decisions-api/",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "ElevenLabs renouvelle ses modèles de transcription",
+      "summary": "Scribe v3 et Scribe v3 Live deviennent disponibles dans l’API, la variante temps réel étant également intégrée à ElevenAgents. Selon les évaluations d’ElevenLabs, v3 réduit les erreurs de mots de 27 % par rapport à v2 sur 102 langues, et Live de 43 % face à v2 Realtime. Live ajoute l’identification des locuteurs et améliore la détection des tours de parole.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "ElevenLabs",
+      "url": "https://elevenlabs.io/blog/scribe-v3",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "Gemini Robotics 2.5 progresse en manipulation",
+      "summary": "DeepMind déploie son nouveau modèle vision-langage-action auprès de partenaires robotiques. Sur plus de 200 tâches, le laboratoire annonce des taux de réussite supérieurs de 30 à 100 % aux références précédentes et une exécution accélérée de 20 à 30 %. Un pilote de préparation de pièces chez Mercedes-Benz avec le robot Apollo 2 atteint 96 % de réussite, selon les partenaires.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "Google DeepMind",
+      "url": "https://deepmind.google/blog/gemini-robotics-2-5-accelerates-real-world-physical-intelligence/",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "Runway ouvre Praxis-1 aux développeurs robotiques",
+      "summary": "Runway publie sous licence Apache 2.0 les poids et le code d’inférence et d’adaptation de Praxis-1, présenté initialement en septembre. Ce modèle de diffusion à mélange d’experts de 27 milliards de paramètres prédit conjointement vidéo et actions. Runway rapporte 46,2 % de réussite sur les 1 200 épisodes de RoboLab-120.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-11",
+      "source": "Runway",
+      "url": "https://runway.com/news/company-news/praxis-1-is-now-available",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "Meituan améliore ses avatars vidéo de longue durée",
+      "summary": "L’équipe LongCat publie LongCat-Video-Avatar 1.6, avec code et poids pour générer des vidéos de personnages pilotées par l’audio. Elle annonce des mouvements plus naturels et une réduction de l’accumulation d’erreurs par rapport à la version 1.5. Le nouveau post-entraînement permet, selon l’équipe, des vidéos dépassant dix minutes tout en préservant davantage leur cohérence.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-15",
+      "source": "Meituan LongCat",
+      "url": "https://github.com/meituan-longcat/LongCat-Video",
+      "other_urls": [
+        "https://ai.info/news/meituan-longcat-video-avatar-1-6-release"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Google ajoute deux configurations à sa gamme TPU",
+      "summary": "Google annonce TPU 8tx pour l’inférence confidentielle et TPU 8i Max pour les contextes volumineux. Le premier associe le silicium TPU 8t à des processeurs AMD EPYC de cinquième génération et protège les données pendant leur traitement. Le second réunit deux puces TPU 8i dans un boîtier, doublant calcul, SRAM et bande passante HBM par rapport à TPU 8i.",
+      "category": "hardware",
+      "kind": "annonce",
+      "date": "2026-11-09",
+      "source": "Google",
+      "url": "https://blog.google/innovation-and-ai/infrastructure-and-cloud/global-network/tpu-8i-max-and-8tx/",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "Rackspace hébergera de l’inférence pour Together AI",
+      "summary": "Rackspace et Together AI signent un accord pluriannuel portant sur une infrastructure dédiée NVIDIA GB300 NVL72 reliée par Spectrum-X Ethernet. Le déploiement est prévu en 2027 et reste soumis à certaines conditions. Une lettre d’intention distincte, non contraignante, prévoit d’explorer une offre commerciale commune pour les entreprises.",
+      "category": "hardware",
+      "kind": "annonce",
+      "date": "2026-11-10",
+      "source": "Rackspace Technology",
+      "url": "https://ir.rackspace.com/node/13806/pdf",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "Fractile réunit 720 millions de dollars pour ses puces",
+      "summary": "La société britannique annonce une série C de 720 millions de dollars menée par Thrive Capital, Founders Fund, Lightspeed et Redpoint, selon Reuters. Le gouvernement confirme la participation de Sovereign AI et de la British Business Bank à ce tour dépassant 500 millions de livres. Reuters rapporte une valorisation de 7 milliards de dollars pour ce concepteur de puces d’inférence.",
+      "category": "hardware",
+      "kind": "fait",
+      "date": "2026-11-11",
+      "source": "GOV.UK",
+      "url": "https://www.gov.uk/government/news/sovereign-ai-and-british-business-bank-invest-in-british-firm-developing-the-next-generation-of-ai-hardware",
+      "other_urls": [
+        "https://www.boursorama.com/bourse/actualites/fractile-une-start-up-britannique-specialisee-dans-les-puces-d-ia-atteint-une-valorisation-de-7-milliards-de-dollars-lors-d-un-tour-de-table-8b89ec92e3b2ff5b73a45e804e39d967"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Une analyse relie six modèles chinois à Blackwell",
+      "summary": "Will DePue, d’Unemployment Labs, identifie dans les poids de six modèles de DeepSeek, Moonshot AI, MiniMax et Ant Group des traces d’initialisation compatibles avec des GPU Blackwell. Le rapport décrit une confirmation sur matériel physique pour deux modèles. Cette méthode ne démontre ni le lieu d’utilisation des puces, ni les conditions d’accès, ni une violation des contrôles à l’exportation.",
+      "category": "hardware",
+      "kind": "analyse",
+      "date": "2026-11-12",
+      "source": "Unemployment Labs",
+      "url": "https://unemploymentlabs.com/checkpoint-forensics",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "Claude intègre tableurs et tableaux collaboratifs",
+      "summary": "Anthropic lance Claude Sheets et Whiteboards en bêta sur les offres payantes. Les utilisateurs peuvent créer et modifier des tableurs avec formules ou travailler collectivement sur des tableaux blancs. Claude Dashboards devient parallèlement Claude Data et passe en disponibilité générale, avec certaines fonctions supplémentaires encore en bêta.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "Anthropic",
+      "url": "https://claude.com/resources/articles/sheets-whiteboards-data",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "Claude Meetings rejoint les appels Google Meet",
+      "summary": "Claude Meetings commence son déploiement en bêta sur les offres Team et Enterprise, avec Google Meet comme première plateforme compatible. L’assistant apparaît comme participant, répond par écrit et produit notes, documents et actions à suivre. Il conserve une transcription, un résumé et des descriptions d’écran, mais pas l’audio ; certaines configurations réglementées sont exclues de la bêta.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-12",
+      "source": "Anthropic",
+      "url": "https://claude.com/resources/articles/claude-meetings",
+      "other_urls": [
+        "https://the-decoder.com/claude-meetings-lets-anthropics-ai-join-your-video-calls/"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Anthropic propose des agents gérés auto-hébergés",
+      "summary": "Anthropic ouvre une bêta privée de Claude Managed Agents permettant d’héberger le service dans son propre cloud ou sur site. Le client conserve l’orchestration, les environnements d’exécution, les identifiants et l’historique des sessions. Les requêtes de modèle restent dirigées vers Anthropic, un fournisseur cloud ou une passerelle choisie par l’entreprise.",
+      "category": "logiciel",
+      "kind": "annonce",
+      "date": "2026-11-12",
+      "source": "Anthropic",
+      "url": "https://claude.com/resources/articles/self-hosted-claude-managed-agents",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "ChatGPT Wallet permet aux agents de payer",
+      "summary": "OpenAI lance un portefeuille pour les achats effectués par ses agents dots, initialement auprès des abonnés ChatGPT Pro aux États-Unis. Chaque achat nécessite une validation de l’utilisateur et utilise un jeton de paiement remplaçant les véritables coordonnées bancaires. American Express, Chase, Mastercard et Visa participent au dispositif.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-13",
+      "source": "OpenAI",
+      "url": "https://openai.com/index/introducing-chatgpt-wallet/",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "llama.cpp et ggml passent en version 1.0",
+      "summary": "L’équipe ggml-org publie les bibliothèques llama.cpp et ggml en version 1.0.0. Les incompatibilités d’API et d’ABI seront désormais signalées par des changements de version majeure, afin de faciliter leur intégration dans les applications. Le projet indique prendre en charge plus de 150 variantes d’architectures de modèles.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-13",
+      "source": "ggml-org / Hugging Face",
+      "url": "https://huggingface.co/blog/ggml-org/llama-cpp-v1",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "ElevenLabs prépare des agents avec mémoire et routines",
+      "summary": "Lors de son sommet new-yorkais, ElevenLabs présente Memory pour conserver le contexte des clients récurrents et Routines pour automatiser les tâches entourant les conversations. L’entreprise prévisualise aussi Interaction Engine, qui gère les interruptions et sélectionne les modèles selon les besoins. L’adaptation de certains modèles aux données propres des entreprises est annoncée pour les mois suivants.",
+      "category": "logiciel",
+      "kind": "annonce",
+      "date": "2026-11-11",
+      "source": "ElevenLabs",
+      "url": "https://elevenlabs.io/blog/nyc-summit",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "Jensen Huang quitte immédiatement la direction de NVIDIA",
+      "summary": "NVIDIA annonce la démission de Jensen Huang de ses fonctions de président, directeur général et administrateur, avec effet immédiat. La directrice financière Colette Kress assure l’intérim tout en conservant ses responsabilités financières. Harvey C. Jones devient président du conseil, qui lance une recherche de successeur permanent.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-12",
+      "source": "NVIDIA",
+      "url": "https://nvidianews.nvidia.com/news/nvidia-announces-ceo-transition",
+      "other_urls": [],
+      "importance": 5
+    },
+    {
+      "title": "Anthropic fixe la fourchette de son introduction en Bourse",
+      "summary": "Le prospectus déposé le 10 novembre prévoit une offre de 825 millions d’actions entre 70 et 78 dollars, soit jusqu’à 64,35 milliards de dollars de produit brut pour l’ensemble des vendeurs. Anthropic demande une cotation au Nasdaq sous le symbole ANT. Sept partenaires industriels se sont également engagés sur un placement privé de 26 milliards de dollars, conditionné à la réalisation de l’introduction.",
+      "category": "societes",
+      "kind": "annonce",
+      "date": "2026-11-10",
+      "source": "Anthropic / SEC",
+      "url": "https://www.sec.gov/Archives/edgar/data/2130357/000162828026072484/anthropicpbc-sx1ax2.htm",
+      "other_urls": [
+        "https://www.investing.com/news/stock-market-news/anthropics-path-from-ai-startup-to-industrydefining-ipo-5014991"
+      ],
+      "importance": 5
+    },
+    {
+      "title": "LangChain lève 300 millions de dollars",
+      "summary": "LangChain annonce une série C de 300 millions de dollars pour une valorisation de 3 milliards. CapitalG mène le tour, avec notamment GIC, DFJ Growth, IVP et Sapphire Ventures. L’entreprise indique que plus de 7 000 organisations utilisent LangSmith pour exécuter, évaluer ou gouverner leurs agents.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-13",
+      "source": "LangChain",
+      "url": "https://www.langchain.com/blog/series-c",
+      "other_urls": [
+        "https://techcrunch.com/2026/11/13/ai-agent-startup-langchain-hits-3b-valuation/"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Agile Robots obtient 500 millions de dollars",
+      "summary": "La société munichoise clôt une série F de 500 millions de dollars à une valorisation de 8,5 milliards. SoftBank mène le financement, auquel participent notamment NVIDIA, Hitachi et T.Capital. Les fonds doivent soutenir l’expansion aux États-Unis, les capacités de production allemandes et l’entrée sur de nouveaux marchés.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-12",
+      "source": "Agile Robots",
+      "url": "https://www.agile-robots.com/en/news/detail/physical-ai-leader-agile-robots-raises-500-million-series-f-funding/",
+      "other_urls": [
+        "https://finance.yahoo.com/technology/ai/articles/german-start-agile-robots-raises-093336221.html"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "AlphaGenome 2 prédit les effets génétiques par type cellulaire",
+      "summary": "DeepMind présente un modèle reliant les variations de l’ADN à leurs effets dans des types et états cellulaires précis. Entraîné sur plus de 100 millions de profils cellulaires provenant de 68 tissus, AlphaGenome 2 identifie selon le laboratoire presque deux fois plus de variants modifiant l’expression des gènes que son prédécesseur. L’API est ouverte à la recherche non commerciale, avec une préversion privée pour les usages commerciaux.",
+      "category": "recherche",
+      "kind": "fait",
+      "date": "2026-11-11",
+      "source": "Google DeepMind",
+      "url": "https://deepmind.google/blog/alphagenome-2-deciphering-how-cells-read-dna-to-better-understand-disease/",
+      "other_urls": [
+        "https://www.nature.com/articles/d41586-026-03673-0"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Un modèle ouvert apprend à manipuler des robots en simulation",
+      "summary": "Des chercheurs présentent PEAR, une méthode entraînant un modèle de raisonnement de 27 milliards de paramètres par renforcement, entièrement en simulation et sans démonstrations. Ils rapportent une progression de 1,6 % à 74,4 % de réussite sur LIBERO et 60 % sur leurs essais avec un véritable robot à deux bras, contre zéro avant entraînement. Le préprint ne rapporte aucune dégradation mesurable sur neuf évaluations générales.",
+      "category": "recherche",
+      "kind": "analyse",
+      "date": "2026-11-13",
+      "source": "arXiv",
+      "url": "https://arxiv.org/abs/2611.18562",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "Un rapport français propose 18 mesures sur les assistants",
+      "summary": "La commission « IA générative et vulnérabilités » remet à l’Élysée un rapport consacré aux risques individuels et collectifs des chatbots, compagnons et jouets intégrant de l’IA. Neuf experts ont conduit 55 auditions et formulé 18 recommandations. Il s’agit de propositions destinées aux pouvoirs publics, et non de nouvelles obligations déjà adoptées.",
+      "category": "regulation",
+      "kind": "analyse",
+      "date": "2026-11-10",
+      "source": "Élysée",
+      "url": "https://www.elysee.fr/emmanuel-macron/2026/11/10/remise-du-rapport-de-la-commission-dexperts-ia-generative-et-vulnerabilites",
+      "other_urls": [
+        "https://www.lemonde.fr/en/economy/article/2026/11/10/commission-calls-for-stricter-regulation-of-ai-assistants-in-france_6776832_19.html"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Les dirigeants européens débattent de souveraineté en IA",
+      "summary": "Réunis à Dublin, les dirigeants de l’Union européenne consacrent leur première discussion approfondie à l’IA, avec Arthur Mensch et Geoffrey Hinton. António Costa met en avant le financement des modèles européens, la sécurisation des chaînes de valeur et l’accès à une énergie abordable. Il annonce de nouvelles discussions en février 2027 et un sommet social consacré aux effets de l’IA la même année.",
+      "category": "regulation",
+      "kind": "fait",
+      "date": "2026-11-13",
+      "source": "Conseil européen",
+      "url": "https://www.consilium.europa.eu/it/press/press-releases/2026/11/13/remarks-by-president-antonio-costa-at-the-press-conference-following-the-informal-meeting-of-heads-of-state-or-government-of-13-november-2026/pdf/",
+      "other_urls": [
+        "https://www.lemonde.fr/en/international/article/2026/11/14/ai-europeans-face-challenge-of-reaching-consensus-to-stay-competitive-and-improve-regulation_6780458_4.html"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Des associations demandent en justice un gel des modèles avancés",
+      "summary": "Quatre organisations, dont Public Citizen et l’Alliance for Secure AI, déposent une plainte devant la cour supérieure de San Francisco contre Anthropic, Google, Meta, OpenAI et SpaceXSI. Elles demandent de suspendre le développement et le déploiement de systèmes avancés qu’elles jugent insuffisamment contrôlables. Cette demande constitue l’objet du recours et non une interdiction prononcée par la justice.",
+      "category": "regulation",
+      "kind": "fait",
+      "date": "2026-11-12",
+      "source": "Alliance for Secure AI",
+      "url": "https://secureainow.org/press-release/alliance-for-secure-ai-nonprofit-coalition-sue-ai-companies-to-freeze-advanced-ai-systems-that-can-escape-human-control/",
+      "other_urls": [
+        "https://abcnews.com/Technology/wireStory/advocacy-groups-sue-ai-giants-freeze-new-models-138081070"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "L’IA arrive en tête des inquiétudes financières sondées par la Fed",
+      "summary": "Le rapport semestriel de stabilité financière présente une enquête auprès de 23 contacts de marché interrogés en septembre et octobre. L’IA est citée comme risque notable par 87 % des répondants, contre 50 % au printemps. Les préoccupations portent sur les valorisations, les cyberattaques et les financements complexes ; ces réponses ne représentent pas une prévision officielle de la Fed.",
+      "category": "societes",
+      "kind": "analyse",
+      "date": "2026-11-13",
+      "source": "Réserve fédérale américaine",
+      "url": "https://www.federalreserve.gov/publications/files/financial-stability-report-20261113.pdf",
+      "other_urls": [
+        "https://ca.finance.yahoo.com/news/ai-rockets-top-worries-financial-210222024.html/"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "United restreint les agents personnels non autorisés",
+      "summary": "United Airlines annonce des restrictions visant les agents et assistants personnels tiers non autorisés sur ses plateformes et par l’intermédiaire des agences et agrégateurs. La compagnie invoque la protection des identifiants, les achats involontaires et certaines obligations réglementaires nécessitant une confirmation humaine. Elle prévoit des modifications de ses politiques de réservation, de billetterie et de distribution.",
+      "category": "usages",
+      "kind": "annonce",
+      "date": "2026-11-11",
+      "source": "United Airlines",
+      "url": "https://united.mediaroom.com/news-releases?item=125496",
+      "other_urls": [
+        "https://www.theverge.com/ai-artificial-intelligence/1031623/united-unauthorized-ai-agents"
+      ],
+      "importance": 3
+    }
+  ],
+  "notes": "32 événements retenus pour la période du 9 au 15 novembre 2026, heure de Paris. Sources primaires privilégiées ; les performances annoncées par les éditeurs sont attribuées à ceux-ci. Pour H3-Image, la date officielle du 11 novembre prévaut sur certains récapitulatifs donnant le 10. Pour Agile Robots, le communiqué porte un en-tête au 10 mais une annonce datée du 12 dans son texte, confirmée par la presse : date retenue, le 12. La page Hydrogen a été mise à jour le 16 ; son lancement du 12 est recoupé par la presse. Le prospectus Anthropic retenu est le dépôt SEC fixe du 10, car le PDF courant a été remplacé depuis. Sont exclus les lancements Qwen4-Max et Hy4 flash du 16, les modèles OpenAI du 17, LongCat-2.5 déjà disponible le 2 et le résultat de physique présenté par OpenAI en novembre mais issu d’un préprint d’octobre. Couverture plus limitée de l’énergie et des annonces hors États-Unis, Europe et Chine."
+}

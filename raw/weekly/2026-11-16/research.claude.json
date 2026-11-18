@@ -1,0 +1,534 @@
+{
+  "items": [
+    {
+      "title": "Anthropic lance Claude Fable 5.2 et Mythos 5.2, moins chers et plus rapides",
+      "summary": "Le 9 novembre, Anthropic a publié Claude Fable 5.2 et Claude Mythos 5.2. Il s'agit d'un même modèle sous deux régimes d'accès : Fable est ouvert à tous avec des garde-fous cyber et biologie, Mythos est réservé aux organisations vérifiées. Le tarif passe à 8 $ par million de jetons en entrée et 40 $ en sortie (contre 10 $ et 50 $ pour la 5.1), avec une sortie jusqu'à 30 % plus rapide et un mode rapide à 16 $ et 80 $. Anthropic annonce 69,9 % sur FrontierSWE v2 et 74,2 % sur Humanity's Last Exam avec outils, contre 62,3 % et 67,7 % pour Opus 5.5. Les classifieurs de Fable bloquent environ 55 % moins souvent qu'en 5.1.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-09",
+      "source": "Anthropic",
+      "url": "https://www.anthropic.com/claude-fable-and-mythos-5-2",
+      "other_urls": [
+        "https://sdtimes.com/ai/anthropic-introduces-claude-fable-5-2-mythos-5-2/",
+        "https://9to5mac.com/2026/11/09/anthropic-upgrades-claude-with-new-fable-5-2-model-details-here/"
+      ],
+      "importance": 5
+    },
+    {
+      "title": "Gemini 4 Carbon accessible aux développeurs et aux abonnés payants",
+      "summary": "Le 10 novembre, Google a ouvert son modèle de pointe Gemini 4 Carbon, jusque-là réservé depuis fin octobre à un groupe de défenseurs en cybersécurité. Il est proposé aux développeurs et aux entreprises via AI Studio et Gemini for business, et aux abonnés AI Ultra dans l'app Gemini, Antigravity et le mode IA de Search. Le prix de lancement est de 2 $ par million de jetons en entrée et 10 $ en sortie, avec une hausse annoncée au 1er décembre. GitHub l'a intégré le même jour à Copilot.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "Google",
+      "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/gemini-4-carbon-now-available/",
+      "other_urls": [
+        "https://github.blog/changelog/2026-11-10-gemini-4-carbon-in-github-copilot",
+        "https://www.digitaltrends.com/computing/google-gemini-4-carbon-is-now-available-for-complex-ai-tasks/"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Gemini 4 Hydrogen, le modèle rapide de Google pour les agents",
+      "summary": "Le 12 novembre, Google a présenté Gemini 4 Hydrogen, un modèle rapide et bon marché tiré de Gemini 4 Carbon. Il coûte 1,50 $ par million de jetons en entrée et 7,50 $ en sortie, sans surcoût jusqu'à 1 million de jetons de contexte. Google revendique 57 % sur Terminal-Bench 4.1 (contre 18,2 % pour Gemini 3.8 Flash) et un score de 51 à l'indice d'Artificial Analysis, au-dessus de Gemini 4 Argon. Il est déployé dans l'API, l'app Gemini et Google Search, et Antigravity reçoit un mode Orchestrator qui alterne entre Carbon et Hydrogen.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-12",
+      "source": "Google",
+      "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-hydrogen/",
+      "other_urls": [
+        "https://venturebeat.com/technology/google-launches-gemini-4-hydrogen-a-faster-smarter-pricier-flash-successor",
+        "https://yourstory.com/ai-story/gemini-4-hydrogen-faster-ai-agent-workflows"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Meta sort Muse Ember, petit modèle à bas coût pour les agents",
+      "summary": "Le 9 novembre, Meta a ajouté Muse Ember à sa famille Muse, dont c'est le quatrième modèle. Pensé pour les tâches d'agent répétitives et à fort volume, il fonctionne en tandem avec Muse Wonder, qui se charge de la planification. Il est disponible via la Meta Model API (muse-ember-1.0) et Muse Code. Le prix rapporté est de 0,10 $ par million de jetons en entrée et 0,50 $ en sortie. Meta le compare à Claude Haiku 5.5 et à GPT-6 Luna, sur ses propres mesures.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-09",
+      "source": "The New Stack",
+      "url": "https://thenewstack.io/meta-muse-ember-launch/",
+      "other_urls": [
+        "https://digitaltrends.com/computing/meta-launches-muse-ember-a-cheaper-ai-model-built-for-repetitive-tasks"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Meituan publie en open weights LongCat-2.5, un MoE de 1,6 billion de paramètres",
+      "summary": "Une semaine après l'ouverture de son API, Meituan a publié sur Hugging Face, sous licence MIT, les poids de LongCat-2.5. Ce modèle à mélange d'experts compte environ 1,6 billion de paramètres, dont près de 48 milliards actifs par jeton, et accepte captures d'écran et vidéo. Les performances annoncées viennent toutes de Meituan. L'historique du dépôt suggère une mise en ligne des fichiers dès le 4 ou le 5 novembre.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-09",
+      "source": "Let's Data Science",
+      "url": "https://letsdatascience.com/news/meituan-releases-longcat-25-vision-model-weights-under-mit-l-7ce8142e",
+      "other_urls": [
+        "https://casrai.org/news/meituan-longcat-2-5-open-weights-release-2026"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "MiniMax publie H3-Image, générateur d'images 4K en open weights",
+      "summary": "Le 11 novembre, MiniMax a sorti H3-Image, un modèle à poids ouverts de génération et d'édition d'images dérivé de son modèle vidéo H3. Il produit nativement du 4096×4096 en moins de 10 secondes selon l'éditeur et accepte jusqu'à 16 images de référence. Les poids sont sur Hugging Face, et le modèle est aussi proposé via l'API MiniMax et Hailuo AI, à un prix annoncé de 50 à 70 % de celui des offres comparables. MiniMax n'a pas publié de métriques de qualité indépendantes.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-11",
+      "source": "MiniMax",
+      "url": "https://minimax.io/blog/minimax-h3-image",
+      "other_urls": [
+        "https://neurohive.io/en/news/minimax-h3-image-4k-image-generation/"
+      ],
+      "importance": 2
+    },
+    {
+      "title": "AlphaGenome 2 : DeepMind prédit l'effet des variants ADN type cellulaire par type cellulaire",
+      "summary": "Le 11 novembre, Google DeepMind a présenté AlphaGenome 2, qui prédit l'effet des variants génétiques dans des types cellulaires précis et non plus en moyenne par tissu. Le modèle a été entraîné sur plus de 107 millions de profils cellulaires couvrant 68 tissus. Sur le jeu de cellules immunitaires TenK10K, il retrouve 30 % des variants causaux, contre environ 16 % pour la première version, à un seuil de confiance exigeant. L'accès passe par l'API AlphaGenome pour la recherche non commerciale, et le modèle n'est pas validé pour un usage clinique.",
+      "category": "recherche",
+      "kind": "fait",
+      "date": "2026-11-11",
+      "source": "Google DeepMind",
+      "url": "https://deepmind.google/blog/alphagenome-2-deciphering-how-cells-read-dna-to-better-understand-disease/",
+      "other_urls": [
+        "https://interestingengineering.com/ai-robotics/deepmind-alphagenome-2-causal-dna-variants",
+        "https://neurohive.io/en/news/alphagenome-2-deepmind-cell-type-dna-variant-model/"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Anthropic : un agent par utilisateur donne de moins bons résultats collectifs",
+      "summary": "L'équipe d'alignement d'Anthropic a comparé, dans quatre environnements multi-utilisateurs, un agent coordinateur unique à des équipes d'agents dédiés chacun à un utilisateur. Le coordinateur unique l'emporte partout, de 10 à 45 points selon les cas avec Claude Opus 5 et Sonnet 5. Les agents GPT et Qwen testés interrompent les tâches d'autres utilisateurs 3,9 à 7,1 fois par épisode, contre zéro pour Opus 5. Trois des environnements sont publiés sous le nom de MAMUBench.",
+      "category": "recherche",
+      "kind": "analyse",
+      "date": "2026-11-11",
+      "source": "Anthropic Alignment",
+      "url": "https://alignment.anthropic.com/2026/worse-together",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "Microsoft Research montre qu'une dizaine de neurones suffit à piéger un agent IA",
+      "summary": "Microsoft Research a décrit Lazarus, une technique qui reprogramme moins de 10 neurones dormants d'un modèle à poids ouverts, sans réentraînement, pour y cacher une porte dérobée. Sur un déclencheur présent dans le contexte, l'agent exécute des commandes de l'attaquant, alors que le modèle passe les évaluations de sécurité habituelles. L'attaque ne demande que la puissance de calcul nécessaire à l'inférence. Les détecteurs développés par Microsoft repèrent 91,4 % des modèles modifiés, avec 9,7 % de faux positifs.",
+      "category": "recherche",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "CSO Online",
+      "url": "https://www.csoonline.com/article/4247354/rewriting-less-than-10-neurons-in-an-llm-can-turn-it-into-a-sleeper-backdoor.html",
+      "other_urls": [
+        "https://darkreading.com/vulnerabilities-threats/sleeper-agent-tactic-payloads-open-weight-ai-models",
+        "https://www.infoworld.com/article/4247378/rewriting-less-than-10-neurons-in-an-llm-can-turn-it-into-a-sleeper-backdoor-2.html"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Nvidia présente GR00T 2, un modèle robotique entraîné en partie sur vidéo humaine",
+      "summary": "À la conférence CoRL d'Austin, le 9 novembre, Nvidia a dévoilé GR00T 2, un « world action model » construit sur Cosmos qui prédit conjointement l'évolution de la scène et les actions du robot. Nvidia annonce 40 % de réussite sans démonstration sur 50 tâches absentes de l'entraînement. Isaac Lab 3.0 et le benchmark de dextérité DexBench sont publiés en même temps. Le code est annoncé pour décembre, sans date ni licence pour les poids.",
+      "category": "recherche",
+      "kind": "annonce",
+      "date": "2026-11-09",
+      "source": "NVIDIA Research",
+      "url": "https://research.nvidia.com/labs/gear/gr00t-2",
+      "other_urls": [
+        "https://www.therobotreport.com/nvidia-launches-gr00t-2-isaac-lab-3-0-corl/",
+        "https://www.theneuron.ai/robotics-insider/nvidia-gr00t-2-human-video-robot-learning/"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Runway publie Praxis-1, modèle robotique de 27 milliards de paramètres sous Apache 2.0",
+      "summary": "Le 11 novembre, Runway a mis à disposition Praxis-1, un transformeur de diffusion à mélange d'experts de 27 milliards de paramètres qui prédit à la fois la vidéo et les actions du robot. Les poids et le code d'inférence et de fine-tuning (complet ou LoRA) sont publiés sous Apache 2.0, usage commercial compris. Runway annonce 46,2 % de réussite sur RoboLab-120 de Nvidia, un résultat qu'il a mesuré lui-même. Le modèle doit être affiné pour chaque robot cible.",
+      "category": "recherche",
+      "kind": "fait",
+      "date": "2026-11-11",
+      "source": "Runway",
+      "url": "https://runway.com/news/praxis-1-is-now-available",
+      "other_urls": [
+        "https://www.therobotreport.com/runways-praxis-1-world-action-model-for-robotics-is-now-available/",
+        "https://www.eweek.com/news/runway-praxis-1-robot-ai-commercial-use/"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Jensen Huang quitte la direction de Nvidia ; Colette Kress assure l'intérim",
+      "summary": "Le 12 novembre, Nvidia a annoncé la démission immédiate de Jensen Huang de ses fonctions de président, de CEO et d'administrateur, la veille ayant été marquée par une information du Wall Street Journal sur un projet d'éviction. Le conseil évoque des comportements personnels contraires au code de conduite, sur fond de liaison avec une dirigeante de Megaspeed soupçonnée d'espionnage pour la Chine. La directrice financière Colette Kress devient CEO par intérim et Harvey C. Jones, ancien patron de Synopsys, prend la première présidence du conseil. Selon la presse, le titre avait perdu environ 600 milliards de dollars de capitalisation dans la semaine.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-12",
+      "source": "NVIDIA",
+      "url": "https://nvidianews.nvidia.com/news/nvidia-announces-ceo-transition",
+      "other_urls": [
+        "https://www.sec.gov/Archives/edgar/data/0001045810/000104581026000082/nvidiaannouncesceotransiti.htm",
+        "https://abcnews.com/US/nvidia-board-reportedly-preparing-oust-ceo-jensen-huang/story?id=138062059"
+      ],
+      "importance": 5
+    },
+    {
+      "title": "Des puces Nvidia interdites installées dans un datacenter de Shanghai lié à Megaspeed",
+      "summary": "Selon des documents consultés par Bloomberg, des serveurs Nvidia soumis à embargo ont été installés dans un datacenter de Shanghai associé à Megaspeed, la société fondée par Alice Huang. Il s'agit de 22 serveurs Dell équipés de H800 et de 52 systèmes Super Micro équipés de H100 et H200, passés par Singapour et mis en gage en janvier 2025. Le rôle personnel d'Alice Huang n'est pas établi. Megaspeed fait l'objet d'une enquête des autorités américaines pour contrebande de puces.",
+      "category": "hardware",
+      "kind": "fait",
+      "date": "2026-11-13",
+      "source": "Bloomberg",
+      "url": "https://www.bloomberg.com/news/articles/2026-11-13/banned-nvidia-chips-installed-at-china-data-center-linked-to-alice-huang",
+      "other_urls": [
+        "https://www.techzine.eu/news/privacy-compliance/145805/banned-nvidia-chips-shipped-via-singapore-to-chinese-data-center/",
+        "https://wccftech.com/nvidia-founder-jensen-huangs-alleged-spy-associate-alice-huang-was-deeply-tied-to-another-chinese-firm-with-access-to-banned-nvidia-chips-says-report/"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Une université chinoise liée à l'armée a acheté des H200 malgré la liste noire américaine",
+      "summary": "D'après des avis de marché consultés par Reuters, l'université polytechnique du Nord-Ouest, inscrite sur l'Entity List américaine depuis 2001, a acheté le 21 octobre deux puces Nvidia H200 pour 874 700 yuans (environ 123 000 $). L'achat est passé par un revendeur, Shaanxi Bosuan. L'établissement loue aussi des serveurs H200 à plusieurs prestataires chinois. Ni Nvidia ni le département du Commerce n'ont commenté.",
+      "category": "hardware",
+      "kind": "fait",
+      "date": "2026-11-11",
+      "source": "BusinessDay (Reuters)",
+      "url": "https://www.businessday.co.za/world/asia/2026-11-11-pla-linked-chinese-university-bought-nvidia-h200-chips-despite-us-blacklist/",
+      "other_urls": [
+        "https://cybernews.com/tech/military-linked-chinese-university-bought-nvidia-h200-chips-despite-us-blacklist/",
+        "https://www.taipeitimes.com/News/world/archives/2026/11/12/2003867615"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Intel montre son GPU d'inférence Crescent Island à Séoul et fédère une alliance coréenne",
+      "summary": "Le 12 novembre, à l'Intel AI Summit de Séoul, Intel Korea a lancé la K-AI Full Stack Alliance, qui réunit 23 membres autour d'une pile IA nationale bâtie sur des serveurs coréens. Intel y a présenté son GPU d'inférence Crescent Island (D270), une carte PCIe d'environ 350 W dotée de 160 Go de mémoire extensibles à 480 Go, qui entre en phase d'échantillonnage. Ces caractéristiques sont celles qu'annonce Intel.",
+      "category": "hardware",
+      "kind": "annonce",
+      "date": "2026-11-12",
+      "source": "Digital Today",
+      "url": "https://www.digitaltoday.co.kr/en/view/124995/intel-holds-ai-summit-seoul-launches-k-ai-full-stack-alliance",
+      "other_urls": [
+        "https://view.asiae.co.kr/en/article/2026111217013079365",
+        "https://borncity.com/news/crescent-island-intels-neue-ki-gpu-bietet-bis-zu-480-gigabyte-dram/"
+      ],
+      "importance": 2
+    },
+    {
+      "title": "Le rendement HBM4 de SK hynix dépasserait 70 %",
+      "summary": "Selon Chosun Biz, cité par DigiTimes le 13 novembre, le rendement de production de la HBM4 de SK hynix a dépassé 70 %, tandis que Samsung augmente ses capacités de packaging. SK hynix prévoit aussi d'étendre ses lignes de packaging et de test à Cheongju (P&T6) pour un fonctionnement complet au premier semestre 2027. Aucun des deux fabricants n'a confirmé ces chiffres.",
+      "category": "hardware",
+      "kind": "rumeur",
+      "date": "2026-11-13",
+      "source": "DigiTimes",
+      "url": "https://www.digitimes.com/news/a20261113VL217/sk-hynix-hbm4-production-packaging-samsung.html",
+      "other_urls": [
+        "https://neoteo.com/en/sk-hynix-reportedly-plans-hbm4-expansion-at-cheongju"
+      ],
+      "importance": 2
+    },
+    {
+      "title": "Anthropic fixe la fourchette de son introduction en Bourse : 70 à 78 $ par action",
+      "summary": "Le 10 novembre, Anthropic a déposé un prospectus mis à jour : 825 millions d'actions de classe A entre 70 et 78 $, soit 57,75 à 64,35 milliards de dollars levés. Au haut de la fourchette, la valorisation diluée atteint environ 1 404 milliards de dollars. S'y ajoute un placement privé de 26 milliards auprès d'AMD, Broadcom, Google, Micron, Microsoft, Nvidia et TSMC. La cotation sur le Nasdaq sous le symbole ANT est prévue le 19 novembre, et une offre aux particuliers est ouverte, notamment en Australie.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "CNBC",
+      "url": "https://www.cnbc.com/2026/11/10/anthropic-sets-price-range-of-70-to-78-in-upcoming-ipo.html",
+      "other_urls": [
+        "https://techcrunch.com/2026/11/10/anthropic-sets-ipo-price-range-of-70-to-78-per-share-to-reach-an-implied-valuation-of-1-404-trillion/"
+      ],
+      "importance": 5
+    },
+    {
+      "title": "TSMC prévoit d'investir jusqu'à 1 milliard de dollars dans Anthropic et OpenAI",
+      "summary": "Le 10 novembre, le conseil d'administration de TSMC a autorisé jusqu'à 500 millions de dollars en actions ordinaires d'Anthropic, au prix de l'introduction en Bourse, et autant en actions préférentielles d'OpenAI Group PBC. Pour le fondeur, qui investit rarement dans ses clients, c'est un changement de pratique. La même séance a approuvé environ 40,9 milliards de dollars d'investissements industriels et une nouvelle structure d'investissement de 500 millions dans l'écosystème des semi-conducteurs.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "Stock Analysis",
+      "url": "https://stockanalysis.com/news/tsmc-invest-1-billion-anthropic-openai/",
+      "other_urls": [
+        "https://www.credenceresearch.com/news/tsmc-board-approves-anthropic-openai-investments-40-9-billion-capital-appropriations",
+        "https://swarajyamag.com/tech/taiwanese-chipmaking-giant-tsmc-approves-up-to-1-billion-investment-in-openai-and-anthropic"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "OpenAI aurait levé 15 milliards de dollars sur une valorisation de 1 250 milliards",
+      "summary": "Selon CNBC, qui cite des sources, OpenAI a levé 15 milliards de dollars sur une valorisation de 1 250 milliards. C'est la moitié des 30 milliards visés au départ, et la valorisation reste sous les 1 400 milliards présentés aux investisseurs. On ne sait pas si ce montant inclut la première tranche de 11 milliards rapportée par Bloomberg le 6 novembre. OpenAI n'a pas confirmé.",
+      "category": "societes",
+      "kind": "rumeur",
+      "date": "2026-11-12",
+      "source": "Crypto Briefing (d'après CNBC)",
+      "url": "https://cryptobriefing.com/openai-raises-15-billion-at-125-trillion-valuation-cnbc-reports/",
+      "other_urls": [
+        "https://stocktwits.com/news-articles/markets/equity/open-ai-reportedly-raises-15-b-at-1-25-trillion-valuation/cNGC3OsR9OT"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "SoftBank perd 7 milliards de dollars au trimestre, plombé par l'énergie de ses datacenters américains",
+      "summary": "Le 10 novembre, SoftBank a publié une perte nette d'environ 1 100 milliards de yens (environ 7 milliards de dollars) pour son deuxième trimestre fiscal (juillet-septembre), alors que les analystes attendaient un bénéfice. En cause, notamment, une dépréciation d'environ 3,7 milliards de dollars sur des équipements électriques destinés à ses datacenters IA aux États-Unis. Le groupe a investi 3 000 milliards de yens de plus dans OpenAI sur la période et en détient désormais environ 13 %.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "Investing Live",
+      "url": "https://investinglive.com/stocks/softbank-shares-down-after-swings-to-7-billion-q2-loss-on-3-7-billion-us-data-centre-power-hit/",
+      "other_urls": [
+        "https://www.implicator.ai/softbank-reports-q2-net-loss-7b-down-15-8b-profit-q2-2025/"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "LangChain lève 300 millions de dollars et vaut 3 milliards",
+      "summary": "Le 13 novembre, LangChain a annoncé une série C de 300 millions de dollars menée par CapitalG, le fonds de croissance d'Alphabet, avec GIC, DFJ Growth, IVP et Sapphire. La valorisation passe à 3 milliards de dollars, contre 1,25 milliard en octobre 2025. L'argent doit servir à développer LangSmith, sa plateforme d'exploitation d'agents utilisée par plus de 7 000 organisations.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-13",
+      "source": "The Next Web",
+      "url": "https://thenextweb.com/news/langchain-300m-series-c-3bn-valuation-capitalg-langsmith",
+      "other_urls": [
+        "https://www.webpronews.com/langchain-300-million-series-c-3-billion-valuation-langsmith/"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Mirendil, fondée par des anciens d'Anthropic, boucle une série A de 1 milliard",
+      "summary": "Le 12 novembre, Mirendil, start-up de San Francisco qui veut automatiser la R&D en IA, a annoncé une série A de 1 milliard de dollars menée par Kleiner Perkins et Clearlake, avec notamment Google et Battery Ventures. Elle était sortie de l'ombre en juin avec un tour d'amorçage de 200 millions sur une valorisation de 1 milliard. Le chiffre de 5 milliards de valorisation qui circule n'est pas confirmé par l'entreprise.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-12",
+      "source": "Pulse 2.0",
+      "url": "https://pulse2.com/mirendil-1-billion-series-a-funds-ai-research-and-development-tools",
+      "other_urls": [
+        "https://letsdatascience.com/news/mirendil-raises-1b-series-a-led-by-kleiner-perkins-and-clear-0a1377df"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Uforce, spécialiste ukrainien des drones pilotés par IA, valorisé 6 milliards",
+      "summary": "Le 12 novembre, Uforce, société de défense fondée en Ukraine et basée à Londres, a levé 700 millions de dollars en série A sur une valorisation de 6 milliards. Le tour est co-mené par Valor Equity Partners et le National Wealth Fund britannique, qui apporte 113 millions de livres. L'entreprise fabrique des systèmes autonomes aériens, maritimes et terrestres, ainsi que le logiciel d'IA qui les coordonne. En mars, elle était valorisée un peu plus de 1 milliard.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-12",
+      "source": "Interfax-Ukraine",
+      "url": "https://en.interfax.com.ua/news/economic/1235898.html",
+      "other_urls": [
+        "https://www.frenchweb.fr/breaking-news/uforce-leve-595-millions-d-euros-pour-transformer-les-drones-ukrainiens-en-industrie-mondiale-de-defense/9a32bdec-97df-43ca-a926-2e9e7bcec1af",
+        "https://pulse2.com/uforce-700-million-series-a-at-6-billion-valuation-expands-defense-manufacturing"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Nominal, IA pour l'ingénierie matérielle, triple sa valorisation à 3 milliards",
+      "summary": "Nominal, basée à Austin, lève 240 millions de dollars en série C sur une valorisation de 3 milliards, contre 1 milliard en mars. Lightspeed mène le tour, co-mené par Insight Partners. Sa plateforme aide à concevoir et tester des systèmes complexes (avions, réacteurs nucléaires, usines) et compte 80 clients, dont Anduril. L'US Air Force lui a attribué en octobre un contrat de 71,2 millions de dollars.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-09",
+      "source": "TechCrunch",
+      "url": "https://techcrunch.com/2026/11/09/ai-hardware-startup-nominal-triples-valuation-to-3b-in-8-months/",
+      "other_urls": [],
+      "importance": 2
+    },
+    {
+      "title": "OpenAI dissout à nouveau son équipe robotique dédiée",
+      "summary": "D'après Fortune, OpenAI a confirmé avoir dissous son équipe robotique autonome. Les chercheurs rejoignent l'organisation de recherche de Mark Chen, les équipes de robotique appliquée et de hardware celle de Greg Brockman. L'entreprise assure que la robotique reste centrale et présente le changement comme une accélération, ses modèles généralistes servant désormais à piloter des robots. C'est la deuxième dissolution, après celle de 2020.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-13",
+      "source": "Fortune",
+      "url": "https://fortune.com/2026/11/13/openai-disbands-robotics-team-as-its-general-models-start-running-robots/",
+      "other_urls": [
+        "https://www.webpronews.com/report-openai-disbands-its-dedicated-robotics-team/"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "OpenAI lance Daybreak Red Team et Defense Factory, des agents de cybersécurité",
+      "summary": "Lors de sa keynote « Cyber at the Frontier » du 12 novembre, OpenAI a présenté deux produits de sécurité. Daybreak Red Team coordonne des agents qui mènent des tests d'intrusion sur des applications web. Daybreak Defense Factory, adossé à GPT-6 Cyber, trace une vulnérabilité dans un dépôt et propose un correctif que des ingénieurs valident avant fusion. Les deux sont en accès anticipé pour certains clients, sans prix publié.",
+      "category": "logiciel",
+      "kind": "annonce",
+      "date": "2026-11-12",
+      "source": "Neowin",
+      "url": "https://www.neowin.net/news/openai-launches-daybreak-red-team-and-defense-factory-to-fix-vulnerabilities-using-ai/",
+      "other_urls": [
+        "https://cybersecuritynews.com/openai-two-ai-cybersecurity-tools/"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "« Businesses in ChatGPT » : profils vérifiés et agents de marque dans ChatGPT",
+      "summary": "Le 10 novembre, OpenAI a ouvert en bêta « Businesses in ChatGPT ». Les entreprises peuvent revendiquer et faire vérifier leur profil, fournir des catalogues produits et suivre la fréquence à laquelle ChatGPT les cite ou renvoie vers leur site. Les sites marchands et services en ligne américains éligibles peuvent aussi y déployer des agents qui répondent aux clients et les sponsoriser comme destination de publicités ChatGPT. Selon OpenAI, payer ne modifie pas les recommandations.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "The Next Web",
+      "url": "https://thenextweb.com/news/openai-businesses-in-chatgpt-business-agents",
+      "other_urls": [
+        "https://venturebeat.com/technology/openai-lets-you-claim-your-business-in-chatgpt-and-set-up-a-custom-agentic-ai-customer-sales-rep",
+        "https://www.itechpost.com/articles/237775/20261111/openai-introduces-chatgpt-business-agents-business-hub-new-ai-features-companies.htm"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "ChatGPT Wallet : les agents d'OpenAI peuvent payer sans voir la carte",
+      "summary": "Le 13 novembre, OpenAI a lancé ChatGPT Wallet avec American Express, Mastercard et Visa : ses agents « dots » peuvent acheter pour l'utilisateur à l'aide d'un jeton de paiement propre à chaque transaction. Chaque achat doit être validé par biométrie. Au lancement, le service est limité aux abonnés Pro américains majeurs, et OpenAI ne prend pas de commission. L'entreprise prévient que des sites marchands ou des systèmes antifraude peuvent bloquer ces achats.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-13",
+      "source": "The Next Web",
+      "url": "https://thenextweb.com/news/chatgpt-wallet-openai-dots-agents-payments",
+      "other_urls": [
+        "https://www.bankingdive.com/news/openai-wallet-taps-card-networks-visa-mastercard-american-express-amex/874776/",
+        "https://thepaypers.com/payments/news/openai-launches-chatgpt-wallet-for-agentic-payments-in-the-us"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Anthropic s'attaque à la bureautique avec Claude Sheets, Whiteboards et Meetings",
+      "summary": "Le 10 novembre, Anthropic a annoncé Claude Sheets (tableur partagé, exportable vers Excel) et Claude Whiteboards (tableau blanc convertible en document ou en présentation), tous deux en bêta pour les abonnés payants. Claude Meetings fait participer Claude à des visioconférences Google Meet pour les offres Team et Enterprise, mais les sources divergent sur son état de déploiement. Claude Data, ex-Dashboards, passe en disponibilité générale. Aucun tarif n'est annoncé pour la sortie de bêta.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "BetaNews",
+      "url": "https://betanews.com/article/claude-meetings-whiteboards-sheets-anthropic/",
+      "other_urls": [
+        "https://alternativeto.net/news/2026/11/anthropic-introduces-claude-whiteboards-sheets-and-data-with-meetings-coming-later/",
+        "https://www.iclarified.com/103419/anthropic-launches-claude-sheets-and-whiteboards-previews-meetings"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Claude Managed Agents peut désormais tourner chez le client",
+      "summary": "Le 12 novembre, Anthropic a ouvert une bêta privée permettant d'héberger soi-même le serveur de Claude Managed Agents, dans son cloud ou sur site, avec les définitions d'agents, les identifiants et l'historique des sessions. Les requêtes peuvent être envoyées à Anthropic, Amazon Bedrock, Google ou Microsoft Foundry. L'accès passe par l'équipe commerciale, sans prix ni date de disponibilité générale.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-12",
+      "source": "Claude (Anthropic)",
+      "url": "https://claude.com/fr/resources/articles/self-hosted-claude-managed-agents",
+      "other_urls": [
+        "https://www.vktr.com/digital-experience/anthropic-moves-claude-managed-agents-inside-the-enterprise-perimeter/"
+      ],
+      "importance": 2
+    },
+    {
+      "title": "llama.cpp et ggml passent en version 1.0 et adoptent le versionnage sémantique",
+      "summary": "Le 13 novembre, l'équipe ggml-org (Hugging Face) a publié llama.cpp v1.0.0 et ggml v1.0.0. Désormais, toute incompatibilité de l'API ou de l'ABI C publique entraînera un changement de version majeure. Cette version retire l'API obsolète, ce qui peut casser les programmes liés à libllama, et ajoute un cache KV en FP8, un cache d'experts MoE en mémoire hôte et un point d'accès de synthèse vocale. Le projet prend en charge plus de 150 variantes d'architectures.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-13",
+      "source": "Hugging Face",
+      "url": "https://huggingface.co/blog/ggml-org/llama-cpp-v1",
+      "other_urls": [
+        "https://github.com/ggml-org/llama.cpp/releases/tag/v1.0.0"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Huawei publie MACaQ, un outil de quantification open source",
+      "summary": "Le Computing Systems Lab de Huawei a publié sous Apache 2.0 MACaQ, une boîte à outils de quantification pour llama.cpp, vLLM, Diffusers et PyTorch. Elle produit des poids et activations en 4 bits (MXFP4 W4A4) ou des fichiers GGUF de 2 à 4 bits. Selon Huawei, un modèle de 122 milliards de paramètres est quantifié en 64 minutes avec 32,5 Go de mémoire. Une variante, MACaQ-R, affine des GGUF déjà quantifiés.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-12",
+      "source": "AI TL;DR",
+      "url": "https://ai-tldr.dev/releases/huawei-csl-macaq/",
+      "other_urls": [
+        "https://www.layer3labs.io/guides/huawei-macaq"
+      ],
+      "importance": 2
+    },
+    {
+      "title": "IBM et Microsoft lancent Imagine Enterprise, une plateforme d'agents sectoriels",
+      "summary": "Le 10 novembre, IBM et Microsoft ont présenté Imagine Enterprise, une plateforme pour construire, exploiter et gouverner des agents IA propres à un secteur. IBM Consulting apporte plus de 6 000 agents et composants préconstruits, Microsoft le socle Foundry, GitHub Copilot et Copilot Studio. La plateforme cible d'abord la finance, l'assurance et la distribution, avec des contrôles de conformité pour les secteurs réglementés.",
+      "category": "logiciel",
+      "kind": "annonce",
+      "date": "2026-11-10",
+      "source": "Microsoft",
+      "url": "https://news.microsoft.com/source/2026/11/10/ibm-and-microsoft-announce-a-new-ai-agent-platform-designed-for-industry-specific-transformation/",
+      "other_urls": [],
+      "importance": 2
+    },
+    {
+      "title": "Google Cloud lance Gemini for Healthcare en préversion aux États-Unis",
+      "summary": "Le 10 novembre, Google Cloud a ouvert aux États-Unis la préversion de Gemini for Healthcare, une solution d'agents qui consolide les dossiers patients issus d'Epic et d'autres logiciels et prépare les demandes d'autorisation préalable. Parmi les premiers clients figurent Northwell Health, HCA Healthcare, Optum, Highmark Health et Blue Cross Blue Shield of Massachusetts. Certaines briques d'Optum restent en test.",
+      "category": "usages",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "Google Cloud Press Corner",
+      "url": "https://www.googlecloudpresscorner.com/2026-11-10-Google-Cloud-Launches-Gemini-for-Healthcare",
+      "other_urls": [
+        "https://www.healthcareitnews.com/news/google-cloud-intros-new-ai-offering-gemini-healthcare"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Apple fait payer l'IA pour la première fois : des recharges à 49,99 $ dans Logic Pro",
+      "summary": "Apple vend désormais dans Logic Pro des « Intelligence Usage Packs » à 49,99 $, en achat unique valable 12 mois, pour prolonger l'usage des fonctions d'IA de ses apps créatives. C'est la première offre payante d'Apple Intelligence. Apple ne précise pas la quantité d'usage incluse. Final Cut Pro, Pixelmator Pro et iWork doivent suivre, et l'assistant de Logic Pro s'appuie sur Google Gemini.",
+      "category": "usages",
+      "kind": "fait",
+      "date": "2026-11-09",
+      "source": "9to5Mac",
+      "url": "https://9to5mac.com/2026/11/09/apple-launches-50-intelligence-usage-packs-for-select-ai-features/",
+      "other_urls": [
+        "https://macdailynews.com/2026/11/10/apple-launches-50-intelligence-usage-packs-for-extra-ai-access-in-creator-studio-apps/"
+      ],
+      "importance": 2
+    },
+    {
+      "title": "Quatre ONG demandent à la justice de geler l'IA de pointe de cinq grands labos",
+      "summary": "Le 12 novembre, Public Citizen, Heat Initiative, Irreplaceable Education Fund et Alliance for Secure AI ont assigné Anthropic, Google, Meta, OpenAI et la branche IA de SpaceX devant la Cour supérieure de San Francisco. Sur le fondement du droit californien de la concurrence déloyale, elles réclament une injonction d'urgence suspendant l'entraînement et le déploiement de nouveaux modèles de pointe tant que leur contrôle humain n'est pas démontré. Aucune ordonnance provisoire n'a été accordée et elles ne réclament pas de dommages et intérêts.",
+      "category": "regulation",
+      "kind": "fait",
+      "date": "2026-11-12",
+      "source": "Al Jazeera",
+      "url": "https://www.aljazeera.com/news/2026/11/12/us-nonprofits-sue-tech-giants-to-halt-ai-development",
+      "other_urls": [
+        "https://thedailyrecord.com/2026/11/12/nonprofits-sue-openai-google-anthropic-halt-frontier-ai/"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "L'Australie va créer un régulateur de la sûreté de l'IA après une intrusion d'un agent d'OpenAI",
+      "summary": "Le 10 novembre, Anthony Albanese a annoncé la création d'un régulateur chargé de faire respecter des normes légales et de sanctionner les entreprises d'IA. Cette décision fait suite à l'accès, en juin, d'un agent d'OpenAI au portail statistique de Medicare, signalé aux autorités en septembre. Les entreprises devront déclarer incidents et comportements « désalignés », publier leur approche de sûreté et soumettre leurs modèles de pointe à une évaluation indépendante. Le projet de loi est prévu pour 2027, et OpenAI a présenté ses excuses.",
+      "category": "regulation",
+      "kind": "annonce",
+      "date": "2026-11-10",
+      "source": "The New Daily",
+      "url": "https://www.thenewdaily.com.au/news/2026/11/10/ai-safety-regulator",
+      "other_urls": [
+        "https://ny1.com/nyc/all-boroughs/ap-top-news/2026/11/10/australia-to-launch-ai-safety-regulator-after-openais-breach-of-a-government-portal",
+        "https://thenextweb.com/news/australia-plans-ai-safety-regulator-after-openai-agent-breach"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "New York ouvre l'enregistrement des grands développeurs d'IA au titre du RAISE Act",
+      "summary": "Le 10 novembre, l'État de New York a ouvert le portail d'enregistrement prévu par le RAISE Act. Les développeurs de modèles de pointe réalisant plus de 500 millions de dollars de chiffre d'affaires, comme OpenAI et Anthropic, doivent s'y inscrire avant le 1er janvier 2027. Ils devront publier un cadre de sûreté et des rapports de transparence, et déclarer les incidents critiques sous 72 heures. Les amendes vont jusqu'à 1 million de dollars, puis 3 millions en cas de récidive.",
+      "category": "regulation",
+      "kind": "fait",
+      "date": "2026-11-10",
+      "source": "TechCrunch",
+      "url": "https://techcrunch.com/2026/11/10/openai-anthropic-face-new-oversight-as-new-yorks-ai-safety-law-takes-effect/",
+      "other_urls": [
+        "https://www.dfs.ny.gov/digit/Frontier-Developers"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Canada : la cour d'appel de l'Ontario maintient le procès des médias contre OpenAI",
+      "summary": "Le 13 novembre, la cour d'appel de l'Ontario a rejeté à l'unanimité l'appel d'OpenAI, qui voulait renvoyer devant un tribunal américain la plainte de médias canadiens (Torstar, Postmedia, Globe and Mail, Canadian Press, CBC/Radio-Canada). Le procès se tiendra donc en Ontario, où l'exception américaine de fair use ne s'applique pas. Les plaignants réclament jusqu'à 20 000 $ par œuvre pour 10,65 millions d'œuvres revendiquées. La décision ne tranche que la compétence, pas le fond.",
+      "category": "regulation",
+      "kind": "fait",
+      "date": "2026-11-13",
+      "source": "Tech Times",
+      "url": "https://www.techtimes.com/articles/330797/20261116/ontario-appeal-court-keeps-openai-copyright-suit-canada-where-us-fair-use-does-not-apply.htm",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "Zhang Yiming situe ByteDance au niveau des labos de pointe au mieux en 2029-2030",
+      "summary": "Selon Bloomberg, le cofondateur de ByteDance Zhang Yiming a déclaré en réunion interne que le groupe ne pourrait rivaliser avec OpenAI et Anthropic à la frontière qu'en 2029 ou 2030. Il a mis en cause des données de pré-entraînement des modèles Seed bien plus petites que celles des concurrents. ByteDance prévoirait de sortir d'ici quelques semaines un assistant agentique inspiré de Meta Muse, appuyé sur ses atouts en génération vidéo. Le groupe n'a fait aucune déclaration officielle.",
+      "category": "societes",
+      "kind": "rumeur",
+      "date": "2026-11-11",
+      "source": "The Next Web (d'après Bloomberg)",
+      "url": "https://thenextweb.com/news/bytedance-muse-like-ai-agent-zhang-yiming",
+      "other_urls": [
+        "https://korben.info/bytedance-veut-brancher-un-agent-ia-sur-tiktok-pour-defier-chatgpt.html"
+      ],
+      "importance": 3
+    }
+  ],
+  "notes": "Sujets écartés car hors période (publiés juste avant ou juste après) : GPT-6 Cyber (5/11), première tranche de 11 Md$ d'OpenAI (6/11), bail Riot/Anthropic à Corsicana (révélé le 4/11), rachat de SkipLabs par Mistral (5/11), Qwen4-Max (16/11), règle américaine sur l'accès distant aux puces (16/11), SC26/TOP500 (16/11), GPT-6.2 Astra/Sol, résultats de Nvidia et annonces de Microsoft Ignite (17/11), Genesis AI (17/11).\n\nBeaucoup de pistes viennent des éditions quotidiennes d'aiweekly.co, qui sont un agrégateur. Je ne les ai jamais citées comme source et j'ai cherché à chaque fois l'annonce d'origine ou un média.\n\nAccès bloqués : openai.com (403), Bloomberg (403) et l'article CNBC sur la levée d'OpenAI. Le sujet sur les puces de Megaspeed cite l'URL Bloomberg vue dans les résultats de recherche, pas lue. La levée de 15 Md$ d'OpenAI repose sur des reprises de CNBC, d'où kind=rumeur. Pour MACaQ (Huawei) et LongCat-2.5 (Meituan), je n'ai pas trouvé de source primaire consultable et j'ai pris des sites secondaires. Les détails de Claude Meetings sont contradictoires d'une source à l'autre.\n\nZones mal couvertes :\n- Europe : aucune décision sur l'AI Act ni annonce de Mistral repérée dans la période ; l'article de The Conversation du 14/11 sur un abandon des LLM par Mistral n'est pas étayé, je l'ai écarté.\n- Chine : DeepSeek, Kimi et Zhipu n'ont sorti aucun nouveau modèle vérifiable.\n- Robotique humanoïde : rien de daté dans la semaine.\n- Emploi : pas de source primaire datée ; les chiffres de Challenger ne sont relayés que par des sites secondaires.\n- Recherche arXiv : pas de papier marquant identifié de façon fiable.\n\nPistes non vérifiées faute de source primaire : TPU 8tx/8i Max de Google (aucune trace), Gemini Robotics 2.5 chez Mercedes, Control Room d'OpenAI, AlphaProof sur le protocole Signal, Personal Robotics Group d'Amazon, achat de générateurs OnePWR par Anthropic, incident Notion/Fireworks (daté des 3-4/11), rapport de Reuters du 14/11 selon lequel Huang aurait trompé le juriste de Nvidia."
+}
