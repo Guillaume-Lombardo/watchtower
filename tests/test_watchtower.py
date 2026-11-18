@@ -104,6 +104,41 @@ class HelperTests(unittest.TestCase):
         self.assertTrue(any("b.example" in p for p in wt.check_markdown(bad, allowed)))
         self.assertTrue(wt.check_markdown("# Titre\n" + md, allowed))
 
+    def test_markdown_check_sees_every_link_form(self):
+        allowed = {f"https://a.example/{i}" for i in range(5)} | {"https://w.example/wiki/Foo_(bar)"}
+        md = "\n".join(f"- x ([A](https://a.example/{i}))" for i in range(5))
+        self.assertEqual(wt.check_markdown(md + "\n- w ([W](https://w.example/wiki/Foo_(bar)))", allowed), [])
+        for bad in ('[B](https://b.example/z "titre")', "<https://b.example/z>", "[B]: https://b.example/z",
+                    "[B](https://a.example:8443/0)"):
+            self.assertTrue(any("lien absent" in p for p in wt.check_markdown(md + "\n- " + bad, allowed)), bad)
+
+    def test_parse_day_converts_offsets_to_paris(self):
+        self.assertEqual(wt.parse_day("2026-11-15T23:30:00-08:00"), D(2026, 11, 16))
+
+    def test_extract_page_date_prefers_publication_meta(self):
+        html = ('<meta name="date" content="2026-11-30"> '
+                '<meta property="article:published_time" content="2026-11-12T10:00:00+00:00">')
+        self.assertEqual(wt.extract_page_date(html), D(2026, 11, 12))
+
+    def test_source_follows_the_kept_link(self):
+        item = {"title": "T", "summary": "S", "category": "modeles", "kind": "fait", "date": "2026-11-10",
+                "source": "Reuters", "url": "https://reuters.example/dead",
+                "other_urls": ["https://www.tc.example/a"], "importance": 4}
+        checks = {"https://reuters.example/dead": {"verdict": "dead", "reason": "HTTP 404", "page_date": None},
+                  "https://www.tc.example/a": {"verdict": "ok", "page_date": "2026-11-10"}}
+        with mock.patch.object(wt, "check_urls", lambda urls: {u: checks[u] for u in urls}):
+            kept, _, _ = wt.validate_items({"codex": {"items": [item]}}, D(2026, 11, 9), D(2026, 11, 15))
+        self.assertEqual((kept[0]["url"], kept[0]["source"]), ("https://www.tc.example/a", "tc.example"))
+
+    def test_impact_topic_needs_valid_impact_evidence(self):
+        ev = {"claim": "c", "url": "https://p.example/1", "source": "P", "date": "2026-03-01", "role": "perception"}
+        topic = {"topic": "T", "evidence": [ev, {**ev, "url": "https://i.example/dead", "role": "impact"}]}
+        checks = {"https://p.example/1": {"verdict": "ok", "page_date": "2026-03-01"},
+                  "https://i.example/dead": {"verdict": "dead", "page_date": None}}
+        with mock.patch.object(wt, "check_urls", lambda urls: {u: checks[u] for u in urls}):
+            kept, rejected, _ = wt.validate_impact({"codex": {"topics": [topic]}}, D(2026, 1, 1), D(2026, 12, 19))
+        self.assertEqual((len(kept), len(rejected)), (0, 1))
+
     def test_validate_items_merges_and_rejects(self):
         start, end = D(2026, 11, 9), D(2026, 11, 15)
         item = {"title": "T", "summary": "S", "category": "modeles", "kind": "fait", "date": "2026-11-10",

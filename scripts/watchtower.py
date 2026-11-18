@@ -12,6 +12,8 @@ Usage :
   watchtower.py weekly|monthly|yearly [--date AAAA-MM-JJ] [--no-push] [--force]
                                       [--providers codex,claude]
 
+--force régénère une édition existante ; il exige --no-push (une édition publiée ne se réécrit pas).
+
 Bibliothèque standard uniquement (Python >= 3.11).
 """
 from __future__ import annotations
@@ -21,6 +23,7 @@ import concurrent.futures as cf
 import datetime as dt
 import fcntl
 import html
+import http.client
 import json
 import os
 import re
@@ -55,6 +58,11 @@ CLAUDE_EFFORT = "high"
 PROVIDERS = ("codex", "claude")
 RESEARCH_TIMEOUT = 60 * 60
 SYNTHESIS_TIMEOUT = 30 * 60
+# Budget total d'un passage `due` : la tâche planifiée l'attend au plus 2 h.
+RUN_BUDGET = 110 * 60
+GIT_TIMEOUT = 5 * 60
+# Chemins qu'un passage a le droit de pousser sur main.
+PUBLISHABLE = ("weekly/", "monthly/", "yearly/", "raw/")
 
 CATEGORIES = ["modeles", "hardware", "logiciel", "societes", "recherche", "regulation", "usages"]
 MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août",
@@ -67,6 +75,19 @@ TRACKING_PARAMS = re.compile(r"^(utm_|fbclid$|gclid$|mc_|ref$|ref_src$|cmpid$|oc
 
 class PipelineError(RuntimeError):
     pass
+
+
+_deadline: float | None = None
+
+
+def call_timeout(limit: int) -> float:
+    """Délai d'un appel, borné par le budget restant du passage."""
+    if _deadline is None:
+        return limit
+    left = _deadline - time.monotonic()
+    if left < 120:
+        raise PipelineError("budget de temps du passage épuisé")
+    return min(limit, left)
 
 
 # --------------------------------------------------------------------------- dates
@@ -146,22 +167,24 @@ def default_edition(kind: str, today: dt.date) -> Edition:
     return Edition(kind, dt.date(year, 12, 20))
 
 
-def due_editions(today: dt.date) -> list[Edition]:
+def due_editions(today: dt.date, done=None) -> list[Edition]:
     """Éditions à produire aujourd'hui, dans l'ordre (l'hebdo d'abord : le mensuel s'en sert).
 
     Un passage manqué est rattrapé : l'hebdo pendant toute sa semaine, le mensuel jusqu'au 7,
-    la rétrospective jusqu'au 31/12.
+    la rétrospective jusqu'au 31/12. `done(ed)` dit si l'édition est faite (par défaut : le
+    fichier existe ; en publication : il est sur origin/main).
     """
+    done = done or (lambda ed: ed.path.exists())
     due = []
     weekly = Edition("weekly", monday_of(today))
-    if weekly.published >= FIRST_WEEKLY and not weekly.path.exists():
+    if weekly.published >= FIRST_WEEKLY and not done(weekly):
         due.append(weekly)
     monthly = Edition("monthly", today.replace(day=1))
-    if monthly.published >= FIRST_MONTHLY and today.day <= 7 and not monthly.path.exists():
+    if monthly.published >= FIRST_MONTHLY and today.day <= 7 and not done(monthly):
         due.append(monthly)
     if today.month == 12 and today.day >= 20 and today.year >= FIRST_YEARLY:
         yearly = Edition("yearly", dt.date(today.year, 12, 20))
-        if not yearly.path.exists():
+        if not done(yearly):
             due.append(yearly)
     return due
 
@@ -214,7 +237,10 @@ def child_env() -> dict[str, str]:
 
 
 def git(*args: str, check: bool = True) -> str:
-    proc = subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True)
+    try:
+        proc = subprocess.run(["git", *args], cwd=ROOT, capture_output=True, text=True, timeout=GIT_TIMEOUT)
+    except subprocess.TimeoutExpired:
+        raise PipelineError(f"git {' '.join(args)} : délai dépassé") from None
     if check and proc.returncode != 0:
         raise PipelineError(f"git {' '.join(args)} : {proc.stderr.strip()}")
     return proc.stdout.strip()
@@ -242,8 +268,8 @@ def run_codex(prompt: str, workdir: Path, label: str, schema: Path | None, searc
         cmd += ["--output-schema", str(schema)]
     cmd.append("-")
     with open(workdir / f"{label}.codex.log", "w") as logf:
-        proc = subprocess.run(cmd, input=prompt, text=True, stdout=logf, stderr=subprocess.STDOUT,
-                              cwd=workdir, env=child_env(), timeout=RESEARCH_TIMEOUT if search else SYNTHESIS_TIMEOUT)
+        proc = subprocess.run(cmd, input=prompt, text=True, stdout=logf, stderr=subprocess.STDOUT, cwd=workdir,
+                              env=child_env(), timeout=call_timeout(RESEARCH_TIMEOUT if search else SYNTHESIS_TIMEOUT))
     if proc.returncode != 0 or not out.exists() or not out.read_text().strip():
         raise PipelineError(f"codex ({label}) : code {proc.returncode}, voir {workdir.name}/{label}.codex.log")
     return out.read_text(encoding="utf-8")
@@ -259,7 +285,7 @@ def run_claude(prompt: str, workdir: Path, label: str, schema: Path | None, sear
     else:
         cmd += ["--tools", ""]
     proc = subprocess.run(cmd, input=prompt, text=True, capture_output=True, cwd=workdir, env=child_env(),
-                          timeout=RESEARCH_TIMEOUT if search else SYNTHESIS_TIMEOUT)
+                          timeout=call_timeout(RESEARCH_TIMEOUT if search else SYNTHESIS_TIMEOUT))
     (workdir / f"{label}.claude.log").write_text(proc.stderr + "\n" + proc.stdout[-4000:])
     if proc.returncode != 0:
         raise PipelineError(f"claude ({label}) : code {proc.returncode}, voir {workdir.name}/{label}.claude.log")
@@ -278,6 +304,7 @@ MODEL_NAMES = {"codex": CODEX_MODEL, "claude": CLAUDE_MODEL}
 def research_all(prompt: str, schema: Path, workdir: Path, label: str, providers: list[str]) -> dict[str, dict]:
     """Lance la même recherche chez chaque fournisseur en parallèle ; un essai de plus en cas d'échec."""
     (workdir / f"{label}.prompt.md").write_text(prompt, encoding="utf-8")
+    key = "topics" if schema.name == "impact.schema.json" else "items"
 
     def one(provider: str) -> dict:
         last = None
@@ -285,9 +312,11 @@ def research_all(prompt: str, schema: Path, workdir: Path, label: str, providers
             try:
                 log(f"recherche {label} : {provider} (essai {attempt})")
                 data = parse_json_text(RUNNERS[provider](prompt, workdir, label, schema, True))
+                if not isinstance(data, dict) or not isinstance(data.get(key), list):
+                    raise PipelineError(f"réponse sans liste « {key} »")
                 log(f"recherche {label} : {provider} terminée")
                 return data
-            except (PipelineError, json.JSONDecodeError, subprocess.TimeoutExpired, KeyError) as exc:
+            except (PipelineError, json.JSONDecodeError, subprocess.TimeoutExpired, KeyError, OSError) as exc:
                 last = exc
                 log(f"recherche {label} : {provider} en échec : {exc}")
         raise PipelineError(f"{provider} : {last}")
@@ -317,7 +346,7 @@ def synthesize(prompt: str, workdir: Path, label: str, providers: list[str], all
             try:
                 log(f"synthèse {label} : {provider} (essai {attempt})")
                 md = strip_md_fence(RUNNERS[provider](current, workdir, f"{label}-{attempt}", None, False))
-            except (PipelineError, subprocess.TimeoutExpired, json.JSONDecodeError) as exc:
+            except (PipelineError, subprocess.TimeoutExpired, json.JSONDecodeError, OSError) as exc:
                 errors.append(f"{provider} : {exc}")
                 log(f"synthèse {label} : {provider} en échec : {exc}")
                 break
@@ -342,7 +371,7 @@ def normalize_url(url: str) -> str:
         p = urllib.parse.urlsplit(url.strip())
     except ValueError:
         return url.strip()
-    host = (p.hostname or "").lower()
+    host = (p.netloc.rsplit("@", 1)[-1] or "").lower()
     if host.startswith("www."):
         host = host[4:]
     query = urllib.parse.urlencode(
@@ -351,10 +380,13 @@ def normalize_url(url: str) -> str:
     return urllib.parse.urlunsplit(("https", host, path, query, ""))
 
 
-DATE_META = re.compile(
+# Métadonnées de publication d'abord ; les balises génériques (souvent la date de mise à jour) ensuite.
+PUBLISHED_META = re.compile(
     r"""<meta[^>]+(?:property|name|itemprop)\s*=\s*["'](?:article:published_time|og:published_time|"""
-    r"""datePublished|date|pubdate|publish[-_]date|parsely-pub-date|sailthru\.date|dc\.date|dcterms\.date|"""
-    r"""DC\.date\.issued|citation_publication_date|citation_date)["'][^>]*>""", re.I)
+    r"""datePublished|parsely-pub-date|citation_publication_date)["'][^>]*>""", re.I)
+OTHER_DATE_META = re.compile(
+    r"""<meta[^>]+(?:property|name|itemprop)\s*=\s*["'](?:date|pubdate|publish[-_]date|sailthru\.date|"""
+    r"""dc\.date|dcterms\.date|DC\.date\.issued|citation_date)["'][^>]*>""", re.I)
 CONTENT_ATTR = re.compile(r"""content\s*=\s*["']([^"']+)["']""", re.I)
 JSONLD_DATE = re.compile(r'"datePublished"\s*:\s*"([^"]+)"')
 ISO_DAY = re.compile(r"(\d{4})[-/](\d{2})[-/](\d{2})")
@@ -362,6 +394,12 @@ ISO_DAY = re.compile(r"(\d{4})[-/](\d{2})[-/](\d{2})")
 
 def parse_day(value: str) -> dt.date | None:
     value = (value or "").strip()
+    try:  # horodatage avec fuseau : jour à Paris
+        stamp = dt.datetime.fromisoformat(value)
+        if stamp.tzinfo:
+            return stamp.astimezone(TZ).date()
+    except ValueError:
+        pass
     m = ISO_DAY.search(value)
     try:
         if m:
@@ -375,12 +413,15 @@ def parse_day(value: str) -> dt.date | None:
 
 
 def extract_page_date(body: str) -> dt.date | None:
-    for tag in DATE_META.finditer(body):
-        content = CONTENT_ATTR.search(tag.group(0))
-        if content and (d := parse_day(html.unescape(content.group(1)))):
-            return d
+    def from_meta(pattern: re.Pattern) -> dt.date | None:
+        for tag in pattern.finditer(body):
+            content = CONTENT_ATTR.search(tag.group(0))
+            if content and (d := parse_day(html.unescape(content.group(1)))):
+                return d
+        return None
+
     m = JSONLD_DATE.search(body)
-    return parse_day(m.group(1)) if m else None
+    return from_meta(PUBLISHED_META) or (parse_day(m.group(1)) if m else None) or from_meta(OTHER_DATE_META)
 
 
 def check_url(url: str) -> dict:
@@ -389,11 +430,11 @@ def check_url(url: str) -> dict:
     if not re.match(r"^https?://[^/\s]+\.[^/\s]+", url or ""):
         res["reason"] = "URL invalide"
         return res
-    req = urllib.request.Request(url, headers={
-        "User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml,*/*;q=0.8",
-        "Accept-Language": "fr,en;q=0.8"})
     for attempt in (1, 2):
         try:
+            req = urllib.request.Request(url, headers={
+                "User-Agent": USER_AGENT, "Accept": "text/html,application/xhtml+xml,*/*;q=0.8",
+                "Accept-Language": "fr,en;q=0.8"})
             with urllib.request.urlopen(req, timeout=25) as resp:
                 res["status"] = resp.status
                 ctype = resp.headers.get("Content-Type", "")
@@ -410,11 +451,12 @@ def check_url(url: str) -> dict:
                 res["verdict"], res["reason"] = "dead", f"HTTP {exc.code}"
                 return res
         except urllib.error.URLError as exc:
-            if isinstance(exc.reason, socket.gaierror):
+            if isinstance(exc.reason, socket.gaierror) and exc.reason.errno == socket.EAI_NONAME:
                 res["verdict"], res["reason"] = "dead", "domaine introuvable"
                 return res
             res["verdict"], res["reason"] = "unverifiable", f"connexion : {exc.reason}"
-        except (TimeoutError, socket.timeout, ssl.SSLError, ConnectionError, OSError) as exc:
+        except (TimeoutError, socket.timeout, ssl.SSLError, ConnectionError, OSError,
+                http.client.HTTPException) as exc:
             res["verdict"], res["reason"] = "unverifiable", f"connexion : {exc.__class__.__name__}"
         except ValueError as exc:
             res["verdict"], res["reason"] = "dead", f"URL invalide : {exc}"
@@ -431,6 +473,11 @@ def check_urls(urls: set[str]) -> dict[str, dict]:
         return dict(zip(ordered, pool.map(check_url, ordered)))
 
 
+def host_of(url: str) -> str:
+    host = (urllib.parse.urlsplit(url).hostname or "").lower()
+    return host[4:] if host.startswith("www.") else host
+
+
 def importance(value) -> int:
     try:
         return max(1, min(5, int(value)))
@@ -444,7 +491,8 @@ def in_window(day: dt.date | None, start: dt.date, end: dt.date, before: int, af
 
 def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tuple[list[dict], list[dict], dict]:
     """Vérifie et fusionne les sujets des recherches. Rend (retenus, écartés, statistiques)."""
-    raw = [(provider, item) for provider, data in results.items() for item in data.get("items", [])]
+    raw = [(provider, item) for provider, data in results.items() for item in data.get("items", [])
+           if isinstance(item, dict)]
     urls = set()
     for _, item in raw:
         urls.add(str(item.get("url", "")).strip())
@@ -473,7 +521,7 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
                 reason = f"page datée du {c.get('page_date')}, hors période"
             else:
                 reason = "aucun lien"
-        elif claimed and not in_window(claimed, start, end, before=3, after=1):
+        elif claimed and not in_window(claimed, start, end, before=0, after=1):
             reason = f"date annoncée {claimed}, hors période"
         if reason:
             rejected.append({"found_by": provider, "title": item.get("title"), "url": url, "reason": reason})
@@ -490,7 +538,8 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
                 "kind": item.get("kind", "fait"),
                 "importance": importance(item.get("importance")),
                 "date": claimed.isoformat() if claimed else None,
-                "source": item.get("source", ""),
+                # Le nom de l'éditeur ne vaut que pour `url` ; si un autre lien le remplace, son domaine.
+                "source": item.get("source", "") if main == url else host_of(main),
                 "url": main,
                 "other_urls": extra,
                 "found_by": [provider],
@@ -529,13 +578,16 @@ def validate_impact(results: dict[str, dict], start: dt.date, end: dt.date) -> t
             evidence = []
             for ev in topic.get("evidence", []):
                 c = checks.get(str(ev.get("url", "")).strip())
-                if c and c["verdict"] != "dead" and in_window(
-                        parse_day(c["page_date"] or ""), start, end, before=60, after=1):
+                if (c and c["verdict"] != "dead"
+                        and in_window(parse_day(c["page_date"] or ""), start, end, before=60, after=1)
+                        and in_window(parse_day(str(ev.get("date", ""))), start, end, before=60, after=1)):
                     evidence.append({**ev, "link_check": c["verdict"]})
-            if evidence:
+            # Un verdict d'impact sans preuve d'impact valide n'est pas étayé.
+            if any(ev.get("role") == "impact" for ev in evidence):
                 kept.append({**topic, "evidence": evidence, "found_by": provider})
             else:
-                rejected.append({"found_by": provider, "topic": topic.get("topic"), "reason": "aucune preuve valide"})
+                rejected.append({"found_by": provider, "topic": topic.get("topic"),
+                                 "reason": "aucune preuve d'impact valide"})
     stats = {
         "per_provider": {p: len(d.get("topics", [])) for p, d in results.items()},
         "kept": len(kept),
@@ -546,14 +598,17 @@ def validate_impact(results: dict[str, dict], start: dt.date, end: dt.date) -> t
     return kept, rejected, stats
 
 
-MD_LINK = re.compile(r"\]\((https?://[^)\s]+)\)")
-BARE_URL = re.compile(r"(?<![(\[<])\bhttps?://[^\s)>\]]+")
+URL_TOKEN = re.compile(r"""https?://[^\s<>"'\[\]]+""")
 
 
 def markdown_urls(md: str) -> list[str]:
-    urls = MD_LINK.findall(md)
-    stripped = MD_LINK.sub("]()", md)
-    urls += [u.rstrip(".,;:") for u in BARE_URL.findall(stripped)]
+    """Toutes les URL du texte, quelle que soit leur forme (lien, lien avec titre, autolien, URL nue)."""
+    urls = []
+    for token in URL_TOKEN.findall(md):
+        token = token.rstrip(".,;:!?*_")
+        while token.endswith(")") and token.count(")") > token.count("("):  # parenthèse du markdown
+            token = token[:-1].rstrip(".,;:!?*_")
+        urls.append(token)
     return urls
 
 
@@ -735,7 +790,7 @@ def build_monthly(ed: Edition, workdir: Path, providers: list[str], missing: lis
     weekly_text = "\n\n".join(
         f"=== Édition {p.name} ({m['period_start']} → {m['period_end']}) ===\n{strip_method_section(b)}"
         for p, m, b in weeklies) or "(aucune)"
-    allowed = {u for _, _, b in weeklies for u in markdown_urls(b)}
+    allowed = {u for _, _, b in weeklies for u in markdown_urls(strip_method_section(b))}
     allowed |= {u for e in gap_items for u in [e["url"], *e["other_urls"]]}
     month = f"{MOIS[ed.start.month - 1]} {ed.start.year}"
     synth_prompt = render(
@@ -756,9 +811,11 @@ def build_monthly(ed: Edition, workdir: Path, providers: list[str], missing: lis
 
 def build_yearly(ed: Edition, workdir: Path, providers: list[str], missing: list[str]) -> list[Path]:
     monthlies = editions_overlapping("monthly", ed.start, ed.end)
-    last_monthly_end = max((parse_day(m["period_end"]) for _, m, _ in monthlies), default=ed.start - dt.timedelta(days=1))
+    monthly_periods = [(parse_day(m["period_start"]), parse_day(m["period_end"])) for _, m, _ in monthlies]
+    # Un hebdo n'est repris que s'il couvre des jours de l'année qu'aucun mensuel ne couvre.
     weeklies = [w for w in editions_overlapping("weekly", ed.start, ed.end)
-                if parse_day(w[1]["period_end"]) > last_monthly_end]
+                if uncovered_ranges(max(parse_day(w[1]["period_start"]), ed.start),
+                                    min(parse_day(w[1]["period_end"]), ed.end), monthly_periods)]
     archive = "\n\n".join(
         f"=== {p.parent.name}/{p.name} ({m['period_start']} → {m['period_end']}) ===\n{strip_method_section(b)}"
         for p, m, b in [*monthlies, *weeklies]) or "(aucune archive)"
@@ -775,7 +832,7 @@ def build_yearly(ed: Edition, workdir: Path, providers: list[str], missing: list
     save_json(ed.raw_dir / "impact.validated.json", {"kept": topics, "rejected": rejected, "stats": stats})
     if len(topics) < 6:
         raise PipelineError(f"seulement {len(topics)} sujets d'impact retenus : trop peu pour publier")
-    allowed = {u for _, _, b in [*monthlies, *weeklies] for u in markdown_urls(b)}
+    allowed = {u for _, _, b in [*monthlies, *weeklies] for u in markdown_urls(strip_method_section(b))}
     allowed |= {ev["url"] for t in topics for ev in t["evidence"]}
     allowed |= set(markdown_urls(previous))
     synth_prompt = render(
@@ -798,9 +855,43 @@ def build_yearly(ed: Edition, workdir: Path, providers: list[str], missing: list
 BUILDERS = {"weekly": build_weekly, "monthly": build_monthly, "yearly": build_yearly}
 
 
+def pull_rebase() -> None:
+    try:
+        git("pull", "--rebase", "origin", "main")
+    except PipelineError:
+        git("rebase", "--abort", check=False)
+        raise
+
+
+def on_remote(ed: Edition) -> bool:
+    rel = ed.path.relative_to(ROOT).as_posix()
+    return subprocess.run(["git", "cat-file", "-e", f"origin/main:{rel}"], cwd=ROOT,
+                          capture_output=True).returncode == 0
+
+
+def publish(ed: Edition, paths: list[Path]) -> None:
+    """Commite les fichiers de l'édition et pousse sur main ; reprend une publication interrompue."""
+    rel = [str(p.relative_to(ROOT)) for p in paths if p.exists()]
+    git("add", "--", *rel)
+    if git("diff", "--cached", "--name-only", "--", *rel):
+        git("commit", "-m", f"docs({ed.kind}): {ed.name} {ed.published.isoformat()}", "--", *rel)
+    pull_rebase()
+    outgoing = git("diff", "--name-only", "origin/main", "HEAD").splitlines()
+    foreign = [p for p in outgoing if not p.startswith(PUBLISHABLE)]
+    if foreign:
+        raise PipelineError(f"commits locaux hors éditions ({', '.join(foreign[:5])}) : publication refusée")
+    if git("rev-list", "origin/main..HEAD"):
+        git("push", "origin", "HEAD:main")
+    log(f"publié : {REPO_URL}/blob/main/{ed.path.relative_to(ROOT)}")
+
+
 def produce(ed: Edition, requested: list[str], push: bool, force: bool) -> Path:
     if ed.path.exists() and not force:
-        log(f"{ed.path.relative_to(ROOT)} existe déjà : rien à faire")
+        if push:  # écrite par un passage dont la publication a échoué : on la publie sans la refaire
+            log(f"{ed.path.relative_to(ROOT)} existe déjà : publication")
+            publish(ed, [ed.path, ed.raw_dir])
+        else:
+            log(f"{ed.path.relative_to(ROOT)} existe déjà : rien à faire")
         return ed.path
     providers, missing = pick_providers(requested)
     stamp = dt.datetime.now(TZ).strftime("%Y%m%dT%H%M%S")
@@ -812,13 +903,7 @@ def produce(ed: Edition, requested: list[str], push: bool, force: bool) -> Path:
     if not push:
         log("--no-push : fichiers écrits, ni commit ni push")
         return ed.path
-    rel = [str(p.relative_to(ROOT)) for p in paths if p.exists()]
-    git("add", "--", *rel)
-    if git("diff", "--cached", "--name-only"):
-        git("commit", "-m", f"docs({ed.kind}): {ed.name} {ed.published.isoformat()}")
-        git("pull", "--rebase", "origin", "main")
-        git("push", "origin", "HEAD:main")
-        log(f"publié : {REPO_URL}/blob/main/{ed.path.relative_to(ROOT)}")
+    publish(ed, paths)
     return ed.path
 
 
@@ -839,6 +924,8 @@ def main(argv: list[str] | None = None) -> int:
         p.add_argument("--force", action="store_true", help="régénère même si le fichier existe")
         p.add_argument("--providers", default=",".join(PROVIDERS))
     args = parser.parse_args(argv)
+    if getattr(args, "force", False) and not args.no_push:
+        parser.error("--force exige --no-push : une édition publiée ne se réécrit pas")
 
     RUNS.mkdir(exist_ok=True)
     lock = open(RUNS / ".lock", "w")
@@ -850,30 +937,45 @@ def main(argv: list[str] | None = None) -> int:
 
     try:
         if args.command == "due":
+            global _deadline
             today = args.today or today_paris()
-            editions = due_editions(today)
+            push = not args.no_push and not args.dry_run
+            if push:
+                _deadline = time.monotonic() + RUN_BUDGET
+                pull_rebase()
+            editions = due_editions(today, on_remote if push else None)
             if not editions:
                 print(f"RIEN À FAIRE ({today.isoformat()})")
                 return 0
             log("à produire : " + " ; ".join(map(repr, editions)))
             if args.dry_run:
                 return 0
-            if not args.no_push:
-                git("pull", "--ff-only", "origin", "main")
-            for ed in editions:
-                produce(ed, list(PROVIDERS), push=not args.no_push, force=False)
-            print("PUBLIÉ : " + " ; ".join(str(e.path.relative_to(ROOT)) for e in editions))
+            done, failures = [], []
+            for ed in editions:  # un échec n'empêche pas les éditions suivantes
+                try:
+                    produce(ed, list(PROVIDERS), push=push, force=False)
+                    done.append(str(ed.path.relative_to(ROOT)))
+                except PipelineError as exc:
+                    failures.append(f"{ed.name} {ed.published} : {exc}")
+                    log(f"échec {ed} : {exc}")
+            if done:
+                print("PUBLIÉ : " + " ; ".join(done))
+            if failures:
+                print("ÉCHEC : " + " ; ".join(failures), file=sys.stderr)
+                return 1
             return 0
         providers = [p.strip() for p in args.providers.split(",") if p.strip() in PROVIDERS]
         ed = Edition(args.command, args.date) if args.date else default_edition(args.command, today_paris())
         if not args.no_push:
-            git("pull", "--ff-only", "origin", "main")
+            pull_rebase()
         produce(ed, providers, push=not args.no_push, force=args.force)
         print(f"PUBLIÉ : {ed.path.relative_to(ROOT)}")
         return 0
     except PipelineError as exc:
         print(f"ÉCHEC : {exc}", file=sys.stderr)
         return 1
+    finally:
+        lock.close()
 
 
 if __name__ == "__main__":
