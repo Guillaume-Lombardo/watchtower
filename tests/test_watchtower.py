@@ -108,6 +108,8 @@ class HelperTests(unittest.TestCase):
         allowed = {f"https://a.example/{i}" for i in range(5)} | {"https://w.example/wiki/Foo_(bar)"}
         md = "\n".join(f"- x ([A](https://a.example/{i}))" for i in range(5))
         self.assertEqual(wt.check_markdown(md + "\n- w ([W](https://w.example/wiki/Foo_(bar)))", allowed), [])
+        self.assertEqual(wt.check_markdown(md + "\n- p [A](https://a.example/0). Fin (voir https://a.example/1).",
+                                           allowed), [])
         for bad in ('[B](https://b.example/z "titre")', "<https://b.example/z>", "[B]: https://b.example/z",
                     "[B](https://a.example:8443/0)", "[B](https://a.example/0!)"):
             self.assertTrue(any("lien absent" in p for p in wt.check_markdown(md + "\n- " + bad, allowed)), bad)

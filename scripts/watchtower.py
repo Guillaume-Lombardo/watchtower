@@ -613,11 +613,21 @@ def markdown_urls(md: str) -> list[str]:
     urls = []
     for m in URL_TOKEN.finditer(md):
         token = m.group(0)
-        # La ponctuation finale fait partie de la destination d'un lien `](…)`, pas d'une URL nue.
-        punct = "" if md[max(0, m.start() - 2):m.start()] == "](" else ".,;:!?*_"
-        token = token.rstrip(punct)
-        while token.endswith(")") and token.count(")") > token.count("("):  # parenthèse du markdown
-            token = token[:-1].rstrip(punct)
+        if md[max(0, m.start() - 2):m.start()] == "](":
+            # Destination d'un lien : elle s'arrête à la parenthèse qui ferme le lien, ponctuation comprise.
+            depth = 0
+            for i, ch in enumerate(token):
+                if ch == "(":
+                    depth += 1
+                elif ch == ")":
+                    if depth == 0:
+                        token = token[:i]
+                        break
+                    depth -= 1
+        else:  # URL nue ou autolien : la ponctuation et la parenthèse finales appartiennent à la phrase
+            token = token.rstrip(".,;:!?*_")
+            while token.endswith(")") and token.count(")") > token.count("("):
+                token = token[:-1].rstrip(".,;:!?*_")
         urls.append(token)
     return urls
 
