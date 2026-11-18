@@ -76,10 +76,12 @@ class PipelineTests(unittest.TestCase):
         self.assertEqual(inputs["gaps"], [["2026-11-01", "2026-11-15"], ["2026-11-23", "2026-11-30"]])
         self.assertIn("ai-monthly — novembre 2026", monthly.read_text())
 
+        # Hebdo d'octobre sans mensuel d'octobre : il reste dans les archives de l'année.
+        self.produce("weekly", D(2026, 10, 12))
         yearly = self.produce("yearly", D(2026, 12, 20))
         text = yearly.read_text()
         self.assertIn("rétrospective 2026", text)
-        self.assertIn("1 édition(s) mensuelle(s), 0 hebdomadaire(s)", text)
+        self.assertIn("1 édition(s) mensuelle(s), 1 hebdomadaire(s)", text)
 
     def test_synthesis_with_unknown_link_is_refused(self):
         def bad(prompt, workdir, label, schema, search):
@@ -87,3 +89,20 @@ class PipelineTests(unittest.TestCase):
         with mock.patch.dict(wt.RUNNERS, {"codex": bad, "claude": bad}):
             with self.assertRaises(wt.PipelineError):
                 wt.synthesize("p", self.root, "s", ["claude", "codex"], {"https://news.example/1"})
+
+    def test_due_tries_every_edition_after_a_failure(self):
+        calls = []
+
+        def produce(ed, *a, **k):
+            calls.append(ed.kind)
+            if ed.kind == "weekly":
+                raise wt.PipelineError("panne")
+            return ed.path
+
+        with mock.patch.object(wt, "produce", produce):
+            code = wt.main(["due", "--today", "2027-03-01", "--no-push"])
+        self.assertEqual((code, calls), (1, ["weekly", "monthly"]))
+
+    def test_force_needs_no_push(self):
+        with self.assertRaises(SystemExit):
+            wt.main(["weekly", "--date", "2026-11-23", "--force"])
