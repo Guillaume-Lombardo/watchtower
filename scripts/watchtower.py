@@ -651,7 +651,9 @@ def check_markdown(md: str, allowed: set[str]) -> list[str]:
 
 def read_front_matter(path: Path) -> tuple[dict, str]:
     text = path.read_text(encoding="utf-8")
-    m = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.S)
+    m = re.match(r"^<!--\n(.*?)\n-->\n(.*)$", text, re.S)
+    if not m:
+        m = re.match(r"^---\n(.*?)\n---\n(.*)$", text, re.S)
     if not m:
         return {}, text
     meta = {}
@@ -696,7 +698,7 @@ def strip_method_section(body: str) -> str:
 
 def header(ed: Edition, title: str, subtitle: str) -> str:
     return (
-        "---\n"
+        "<!--\n"
         f"type: {ed.kind}\n"
         f"newsletter: {ed.name}\n"
         f"published: {ed.published.isoformat()}\n"
@@ -704,13 +706,9 @@ def header(ed: Edition, title: str, subtitle: str) -> str:
         f"period_end: {ed.end.isoformat()}\n"
         "language: fr\n"
         "generated_by_ai: true\n"
-        "---\n\n"
+        "-->\n\n"
         f"# {title}\n\n"
-        f"*{subtitle}*\n\n"
-        "> **Texte généré automatiquement par IA**, sans relecture humaine systématique : deux assistants "
-        "ont mené des recherches indépendantes, un script a vérifié les liens, un assistant a rédigé la "
-        "synthèse. Chaque information renvoie à sa source : vérifiez-la avant de la reprendre. "
-        f"Une erreur ? [Ouvrez une issue]({REPO_URL}/issues).\n\n"
+        f"*{subtitle}*[^generation-ia]\n\n"
     )
 
 
@@ -734,7 +732,12 @@ def method_section(ed: Edition, stats_by_step: dict[str, dict], writer: str, mis
     lines.append(f"- Rédaction : {writer} ({MODEL_NAMES[writer]}).")
     lines.append(f"- Données brutes et liens écartés : [{raw_rel.strip('./')}]({raw_rel}) ; "
                  f"prompts : [prompts/](../prompts/) (version `{version}`).")
-    return "\n".join(lines) + "\n"
+    return ("\n".join(lines) + "\n\n"
+        "[^generation-ia]: **Texte généré automatiquement par IA**, sans relecture humaine systématique : deux assistants "
+        "ont mené des recherches indépendantes, un script a vérifié les liens, un assistant a rédigé la "
+        "synthèse. Chaque information renvoie à sa source : vérifiez-la avant de la reprendre. "
+        f"Une erreur ? [Ouvrez une issue]({REPO_URL}/issues).\n"
+    )
 
 
 def write_atomic(path: Path, text: str) -> None:

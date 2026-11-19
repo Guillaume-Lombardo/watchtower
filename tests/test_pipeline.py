@@ -66,7 +66,6 @@ class PipelineTests(unittest.TestCase):
         weekly = self.produce("weekly", D(2026, 11, 23))
         text = weekly.read_text()
         self.assertIn("period_start: 2026-11-16", text)
-        self.assertIn("Texte généré automatiquement par IA", text)
         self.assertIn("## Méthode", text)
         self.assertTrue((self.root / "raw/weekly/2026-11-23/research.validated.json").exists())
 
@@ -77,11 +76,22 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("ai-monthly — novembre 2026", monthly.read_text())
 
         # Hebdo d'octobre sans mensuel d'octobre : il reste dans les archives de l'année.
-        self.produce("weekly", D(2026, 10, 12))
+        legacy = self.produce("weekly", D(2026, 10, 12))
+        legacy.write_text(legacy.read_text().replace("<!--\n", "---\n", 1).replace("\n-->\n", "\n---\n", 1))
         yearly = self.produce("yearly", D(2026, 12, 20))
         text = yearly.read_text()
         self.assertIn("rétrospective 2026", text)
         self.assertIn("1 édition(s) mensuelle(s), 1 hebdomadaire(s)", text)
+
+        for edition in (weekly, monthly, yearly):
+            with self.subTest(edition=edition.name):
+                text = edition.read_text()
+                self.assertTrue(text.startswith("<!--\n"))
+                self.assertEqual(text.count("[^generation-ia]"), 2)
+                body, footnote = text.rsplit("\n[^generation-ia]: ", 1)
+                self.assertIn("*[^generation-ia]\n", body)
+                self.assertNotIn("Texte généré automatiquement par IA", body)
+                self.assertTrue(footnote.startswith("**Texte généré automatiquement par IA**"))
 
     def test_synthesis_with_unknown_link_is_refused(self):
         def bad(prompt, workdir, label, schema, search):
