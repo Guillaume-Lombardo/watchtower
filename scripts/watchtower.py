@@ -201,6 +201,8 @@ def render(template_name: str, **values: str) -> str:
 
     def sub(m: re.Match) -> str:
         key = m.group(1)
+        if key == "style" and key not in values:  # règles de style communes aux synthèses
+            values[key] = (PROMPTS / "style.md").read_text(encoding="utf-8").strip()
         if key not in values:
             raise PipelineError(f"{template_name} : variable {{{{{key}}}}} non fournie")
         return str(values[key])
@@ -226,6 +228,36 @@ def strip_md_fence(text: str) -> str:
     text = text.strip()
     m = re.match(r"^```(?:markdown|md)?\s*\n(.*)\n```$", text, re.S)
     return m.group(1).strip() if m else text
+
+
+# Les URL (à recopier à l'identique) sont laissées telles quelles.
+URL_SPAN = re.compile(r"https?://[^\s<>\]]+")
+DASH_SPACED = re.compile(r"[ \u00a0\u202f]*[\u2013\u2014][ \u00a0\u202f]*")
+BULLET_DASH = re.compile(r"^(\s*- \*\*[^*\n]+\*\*)[ \u00a0\u202f]*[\u2013\u2014][ \u00a0\u202f]*", re.M)
+
+
+def normalize_typography(md: str) -> str:
+    """Apostrophe droite, tiret simple à la place des tirets cadratin et demi-cadratin."""
+    def fix(chunk: str) -> str:
+        chunk = chunk.replace("\u2019", "'").replace("\u2018", "'")
+        return DASH_SPACED.sub(lambda m: " - " if m.group(0) != m.group(0).strip() else "-", chunk)
+
+    md = BULLET_DASH.sub(r"\1 : ", md)  # ancien format des puces : « **Titre** — … »
+    out, pos = [], 0
+    for m in URL_SPAN.finditer(md):
+        out += [fix(md[pos:m.start()]), m.group(0)]
+        pos = m.end()
+    out.append(fix(md[pos:]))
+    return "".join(out)
+
+
+# Emoji : plans supplémentaires, sélecteur emoji, touches, et les caractères du BMP à propriété Unicode
+# Emoji_Presentation (emoji-data.txt). Les symboles textuels (✓, ★, →, ×) restent permis.
+EMOJI = re.compile(
+    "[\U0001F000-\U0001FAFF\uFE0F\u20E3"
+    "\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FD\u25FE\u2614\u2615\u2648-\u2653\u267F\u2693\u26A1"
+    "\u26AA\u26AB\u26BD\u26BE\u26C4\u26C5\u26CE\u26D4\u26EA\u26F2\u26F3\u26F5\u26FA\u26FD\u2705"
+    "\u270A\u270B\u2728\u274C\u274E\u2753-\u2755\u2757\u2795-\u2797\u27B0\u27BF\u2B1B\u2B1C\u2B50\u2B55]")
 
 
 def child_env() -> dict[str, str]:
@@ -345,7 +377,8 @@ def synthesize(prompt: str, workdir: Path, label: str, providers: list[str], all
         for attempt in (1, 2):
             try:
                 log(f"synthèse {label} : {provider} (essai {attempt})")
-                md = strip_md_fence(RUNNERS[provider](current, workdir, f"{label}-{attempt}", None, False))
+                md = normalize_typography(
+                    strip_md_fence(RUNNERS[provider](current, workdir, f"{label}-{attempt}", None, False)))
             except (PipelineError, subprocess.TimeoutExpired, json.JSONDecodeError, OSError) as exc:
                 errors.append(f"{provider} : {exc}")
                 log(f"synthèse {label} : {provider} en échec : {exc}")
@@ -358,7 +391,8 @@ def synthesize(prompt: str, workdir: Path, label: str, providers: list[str], all
             current = prompt + (
                 "\n\n---\nTon brouillon précédent a été refusé par le contrôle automatique :\n- "
                 + "\n- ".join(problems[:20])
-                + "\nRecommence en n'utilisant que les URL fournies dans l'entrée, recopiées à l'identique."
+                + "\nRecommence en corrigeant ces points, avec uniquement les URL fournies dans l'entrée,"
+                " recopiées à l'identique."
             )
     raise PipelineError(f"synthèse {label} impossible : {'; '.join(errors)}")
 
@@ -643,6 +677,8 @@ def check_markdown(md: str, allowed: set[str]) -> list[str]:
         problems.append(f"seulement {len(urls)} liens : chaque information doit citer sa source")
     if re.search(r"^# ", md, re.M):
         problems.append("titre de niveau 1 interdit (l'en-tête est ajouté par le script)")
+    if emoji := sorted(set(EMOJI.findall(md))):
+        problems.append(f"emoji interdit : {' '.join(emoji)}")
     return problems
 
 
@@ -831,7 +867,7 @@ def build_monthly(ed: Edition, workdir: Path, providers: list[str], missing: lis
     save_json(ed.raw_dir / "inputs.json", {
         "weeklies": [p.name for p, _, _ in weeklies],
         "gaps": [[s.isoformat(), e.isoformat()] for s, e in gaps]})
-    text = (header(ed, f"ai-monthly — {month}", f"Synthèse du mois, publiée le {fr_date(ed.published)}")
+    text = (header(ed, f"ai-monthly de {month}", f"Synthèse du mois, publiée le {fr_date(ed.published)}")
             + body.strip() + "\n" + method_section(ed, stats_by_step, writer, missing + failed, extra))
     write_atomic(ed.path, text)
     return [ed.path, ed.raw_dir]
@@ -872,7 +908,7 @@ def build_yearly(ed: Edition, workdir: Path, providers: list[str], missing: list
     failed = [f"{p} (échec)" for p in providers if p not in results]
     extra = (f"Archives utilisées : {len(monthlies)} édition(s) mensuelle(s), {len(weeklies)} hebdomadaire(s)"
              + ("" if prev.path.exists() else " ; pas de rétrospective l'année précédente") + ".")
-    text = (header(ed, f"ai-yearly — rétrospective {ed.published.year}",
+    text = (header(ed, f"ai-yearly, rétrospective {ed.published.year}",
                    f"L'année {ed.published.year} en IA, publiée le {fr_date(ed.published)}")
             + body.strip() + "\n" + method_section(ed, {"Recherche d'impact": stats}, writer, missing + failed, extra))
     write_atomic(ed.path, text)

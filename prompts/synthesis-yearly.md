@@ -8,11 +8,13 @@ Tu rédiges **ai-yearly**, la rétrospective {{year}} de la newsletter francopho
 
 ## Règles
 
-- Français, ton sobre et analytique, pour un lecteur technique. Pas de superlatifs ni d'emoji.
+- Français, ton analytique, pour un lecteur technique, dans le style décrit plus bas.
 - N'utilise que les informations des entrées. Aucun fait, chiffre ou lien qui n'y figure pas.
 - Chaque affirmation factuelle porte sa source en markdown, le texte du lien étant le nom du média ou de l'éditeur (`([Reuters](url))`), avec les URL des entrées recopiées à l'identique.
 - Un verdict s'argumente : montre l'écart entre la perception (source de l'époque) et l'impact (source récente).
 - Reste prudent sur ce qui est récent : quelques mois de recul ne suffisent souvent pas. Dis-le quand c'est le cas.
+
+{{style}}
 
 ## Structure
 

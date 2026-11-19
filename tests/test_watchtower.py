@@ -176,6 +176,28 @@ class HelperTests(unittest.TestCase):
         with self.assertRaises(wt.PipelineError):
             wt.render("synthesis-weekly.md", period="x")
 
+    def test_synthesis_prompts_include_style(self):
+        style = (wt.PROMPTS / "style.md").read_text(encoding="utf-8").strip()
+        for name in ("synthesis-weekly.md", "synthesis-monthly.md", "synthesis-yearly.md"):
+            with self.subTest(name=name):
+                self.assertIn("{{style}}", (wt.PROMPTS / name).read_text(encoding="utf-8"))
+        text = wt.render("synthesis-weekly.md", period="p", published="d", items_json="[]")
+        self.assertIn(style, text)
+        self.assertNotIn("{{style}}", text)
+
+    def test_normalize_typography_keeps_urls(self):
+        md = ("- **Titre** \u2014 l\u2019annonce, 2026\u20132027 \u2014 suite.\u00a0\u2014 fin "
+              "([A](https://a.example/l\u2019x\u2014y))")
+        self.assertEqual(wt.normalize_typography(md),
+                         "- **Titre** : l'annonce, 2026-2027 - suite. - fin ([A](https://a.example/l\u2019x\u2014y))")
+
+    def test_markdown_check_refuses_emoji(self):
+        allowed = {f"https://a.example/{i}" for i in range(5)}
+        md = "\n".join(f"- x ([A](https://a.example/{i}))" for i in range(5))
+        self.assertEqual(wt.check_markdown(md + "\n- Tests \u2713, note \u2605\u2605, \u2192 \u00d7 2", allowed), [])
+        for emoji in ("\U0001F680", "\u2705", "\u26a0\ufe0f", "1\ufe0f\u20e3", "\u2615", "\u26bd"):
+            self.assertTrue(any("emoji" in p for p in wt.check_markdown(md + " " + emoji, allowed)), emoji)
+
 
 if __name__ == "__main__":
     unittest.main()
