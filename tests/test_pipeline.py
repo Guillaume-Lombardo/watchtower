@@ -73,7 +73,7 @@ class PipelineTests(unittest.TestCase):
         inputs = json.loads((self.root / "raw/monthly/2026-12-01/inputs.json").read_text())
         self.assertEqual(inputs["weeklies"], ["2026-11-23_ai-weekly.md"])
         self.assertEqual(inputs["gaps"], [["2026-11-01", "2026-11-15"], ["2026-11-23", "2026-11-30"]])
-        self.assertIn("ai-monthly — novembre 2026", monthly.read_text())
+        self.assertIn("ai-monthly de novembre 2026", monthly.read_text())
 
         # Hebdo d'octobre sans mensuel d'octobre : il reste dans les archives de l'année.
         legacy = self.produce("weekly", D(2026, 10, 12))
