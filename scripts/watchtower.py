@@ -251,9 +251,13 @@ def normalize_typography(md: str) -> str:
     return "".join(out)
 
 
-# Emoji à présentation graphique : plans supplémentaires, sélecteur emoji, touches, et les plus courants du BMP.
-# Les symboles textuels (✓, ★, →, ×) restent permis.
-EMOJI = re.compile("[\U0001F000-\U0001FAFF\uFE0F\u20E3\u2705\u274C\u274E\u2B50\u26A1\u26D4\u2728\u2757\u2753\u231B\u23F3]")
+# Emoji : plans supplémentaires, sélecteur emoji, touches, et les caractères du BMP à propriété Unicode
+# Emoji_Presentation (emoji-data.txt). Les symboles textuels (✓, ★, →, ×) restent permis.
+EMOJI = re.compile(
+    "[\U0001F000-\U0001FAFF\uFE0F\u20E3"
+    "\u231A\u231B\u23E9-\u23EC\u23F0\u23F3\u25FD\u25FE\u2614\u2615\u2648-\u2653\u267F\u2693\u26A1"
+    "\u26AA\u26AB\u26BD\u26BE\u26C4\u26C5\u26CE\u26D4\u26EA\u26F2\u26F3\u26F5\u26FA\u26FD\u2705"
+    "\u270A\u270B\u2728\u274C\u274E\u2753-\u2755\u2757\u2795-\u2797\u27B0\u27BF\u2B1B\u2B1C\u2B50\u2B55]")
 
 
 def child_env() -> dict[str, str]:

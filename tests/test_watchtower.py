@@ -195,7 +195,7 @@ class HelperTests(unittest.TestCase):
         allowed = {f"https://a.example/{i}" for i in range(5)}
         md = "\n".join(f"- x ([A](https://a.example/{i}))" for i in range(5))
         self.assertEqual(wt.check_markdown(md + "\n- Tests \u2713, note \u2605\u2605, \u2192 \u00d7 2", allowed), [])
-        for emoji in ("\U0001F680", "\u2705", "\u26a0\ufe0f", "1\ufe0f\u20e3"):
+        for emoji in ("\U0001F680", "\u2705", "\u26a0\ufe0f", "1\ufe0f\u20e3", "\u2615", "\u26bd"):
             self.assertTrue(any("emoji" in p for p in wt.check_markdown(md + " " + emoji, allowed)), emoji)
 
 
