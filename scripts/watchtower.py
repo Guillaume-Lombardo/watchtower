@@ -198,11 +198,11 @@ def log(msg: str) -> None:
 
 def render(template_name: str, **values: str) -> str:
     text = (PROMPTS / template_name).read_text(encoding="utf-8")
-    if "style" not in values:  # règles de style communes aux synthèses
-        values["style"] = (PROMPTS / "style.md").read_text(encoding="utf-8").strip()
 
     def sub(m: re.Match) -> str:
         key = m.group(1)
+        if key == "style" and key not in values:  # règles de style communes aux synthèses
+            values[key] = (PROMPTS / "style.md").read_text(encoding="utf-8").strip()
         if key not in values:
             raise PipelineError(f"{template_name} : variable {{{{{key}}}}} non fournie")
         return str(values[key])
@@ -233,6 +233,7 @@ def strip_md_fence(text: str) -> str:
 # Les URL (à recopier à l'identique) sont laissées telles quelles.
 URL_SPAN = re.compile(r"https?://[^\s<>\]]+")
 DASH_SPACED = re.compile(r"[ \u00a0\u202f]*[\u2013\u2014][ \u00a0\u202f]*")
+BULLET_DASH = re.compile(r"^(\s*- \*\*[^*\n]+\*\*)[ \u00a0\u202f]*[\u2013\u2014][ \u00a0\u202f]*", re.M)
 
 
 def normalize_typography(md: str) -> str:
@@ -241,6 +242,7 @@ def normalize_typography(md: str) -> str:
         chunk = chunk.replace("\u2019", "'").replace("\u2018", "'")
         return DASH_SPACED.sub(lambda m: " - " if m.group(0) != m.group(0).strip() else "-", chunk)
 
+    md = BULLET_DASH.sub(r"\1 : ", md)  # ancien format des puces : « **Titre** — … »
     out, pos = [], 0
     for m in URL_SPAN.finditer(md):
         out += [fix(md[pos:m.start()]), m.group(0)]
@@ -249,7 +251,9 @@ def normalize_typography(md: str) -> str:
     return "".join(out)
 
 
-EMOJI = re.compile("[\U0001F000-\U0001FAFF\u2600-\u27BF\u2B00-\u2BFF\uFE0F]")
+# Emoji à présentation graphique : plans supplémentaires, sélecteur emoji, touches, et les plus courants du BMP.
+# Les symboles textuels (✓, ★, →, ×) restent permis.
+EMOJI = re.compile("[\U0001F000-\U0001FAFF\uFE0F\u20E3\u2705\u274C\u274E\u2B50\u26A1\u26D4\u2728\u2757\u2753\u231B\u23F3]")
 
 
 def child_env() -> dict[str, str]:
