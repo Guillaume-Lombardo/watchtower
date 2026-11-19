@@ -690,7 +690,8 @@ def uncovered_ranges(start: dt.date, end: dt.date, covered: list[tuple[dt.date, 
 
 
 def strip_method_section(body: str) -> str:
-    return re.split(r"\n---\n\n## Méthode\n", body)[0].strip()
+    article = re.split(r"\n---\n\n## Méthode\n", body)[0]
+    return re.sub(r"(?m)^\[\^generation-ia\]: [^\n]*\n\n", "", article).strip()
 
 
 # --------------------------------------------------------------------------- écriture
@@ -709,6 +710,10 @@ def header(ed: Edition, title: str, subtitle: str) -> str:
         "-->\n\n"
         f"# {title}\n\n"
         f"*{subtitle}*[^generation-ia]\n\n"
+        "[^generation-ia]: **Texte généré automatiquement par IA**, sans relecture humaine systématique : deux assistants "
+        "ont mené des recherches indépendantes, un script a vérifié les liens, un assistant a rédigé la "
+        "synthèse. Chaque information renvoie à sa source : vérifiez-la avant de la reprendre. "
+        f"Une erreur ? [Ouvrez une issue]({REPO_URL}/issues).\n\n"
     )
 
 
@@ -732,12 +737,7 @@ def method_section(ed: Edition, stats_by_step: dict[str, dict], writer: str, mis
     lines.append(f"- Rédaction : {writer} ({MODEL_NAMES[writer]}).")
     lines.append(f"- Données brutes et liens écartés : [{raw_rel.strip('./')}]({raw_rel}) ; "
                  f"prompts : [prompts/](../prompts/) (version `{version}`).")
-    return ("\n".join(lines) + "\n\n"
-        "[^generation-ia]: **Texte généré automatiquement par IA**, sans relecture humaine systématique : deux assistants "
-        "ont mené des recherches indépendantes, un script a vérifié les liens, un assistant a rédigé la "
-        "synthèse. Chaque information renvoie à sa source : vérifiez-la avant de la reprendre. "
-        f"Une erreur ? [Ouvrez une issue]({REPO_URL}/issues).\n"
-    )
+    return "\n".join(lines) + "\n"
 
 
 def write_atomic(path: Path, text: str) -> None:

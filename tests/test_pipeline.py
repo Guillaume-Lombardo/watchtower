@@ -88,10 +88,9 @@ class PipelineTests(unittest.TestCase):
                 text = edition.read_text()
                 self.assertTrue(text.startswith("<!--\n"))
                 self.assertEqual(text.count("[^generation-ia]"), 2)
-                body, footnote = text.rsplit("\n[^generation-ia]: ", 1)
-                self.assertIn("*[^generation-ia]\n", body)
-                self.assertNotIn("Texte généré automatiquement par IA", body)
-                self.assertTrue(footnote.startswith("**Texte généré automatiquement par IA**"))
+                self.assertRegex(text, r"\*\[\^generation-ia\]\n\n\[\^generation-ia\]: \*\*Texte généré")
+                _, body = wt.read_front_matter(edition)
+                self.assertNotIn(f"{wt.REPO_URL}/issues", wt.strip_method_section(body))
 
     def test_synthesis_with_unknown_link_is_refused(self):
         def bad(prompt, workdir, label, schema, search):
