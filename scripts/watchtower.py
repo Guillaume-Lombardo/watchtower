@@ -51,7 +51,7 @@ FIRST_MONTHLY = dt.date(2026, 12, 1)
 FIRST_YEARLY = 2026
 NEWSLETTER_START_FR = "23 novembre 2026"
 
-CODEX_MODEL = "gpt-6.1-sol"
+CODEX_MODEL = "gpt-6.2-sol"
 CODEX_EFFORT = "high"
 CLAUDE_MODEL = "claude-opus-5-5"
 CLAUDE_EFFORT = "high"
