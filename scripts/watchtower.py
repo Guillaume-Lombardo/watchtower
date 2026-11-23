@@ -2,6 +2,7 @@
 """Pipeline de la newsletter watchtower : ai-weekly, ai-monthly, ai-yearly.
 
 Étapes d'un passage :
+  0. relevé des tendances X (Twitter) liées à l'IA, vérifiées par script, qui servent de pistes ;
   1. recherche indépendante par Codex et par Claude (même prompt, sortie JSON) ;
   2. vérification des liens par script (page joignable, date dans la période) ;
   3. synthèse en markdown à partir des seules entrées vérifiées ;
@@ -357,7 +358,7 @@ MODEL_NAMES = {"codex": CODEX_MODEL, "claude": CLAUDE_MODEL}
 def research_all(prompt: str, schema: Path, workdir: Path, label: str, providers: list[str]) -> dict[str, dict]:
     """Lance la même recherche chez chaque fournisseur en parallèle ; un essai de plus en cas d'échec."""
     (workdir / f"{label}.prompt.md").write_text(prompt, encoding="utf-8")
-    key = "topics" if schema.name == "impact.schema.json" else "items"
+    key = {"impact.schema.json": "topics", "trends.schema.json": "trends"}.get(schema.name, "items")
 
     def one(provider: str) -> dict:
         last = None
@@ -432,6 +433,8 @@ def normalize_url(url: str) -> str:
     query = urllib.parse.urlencode(
         [(k, v) for k, v in urllib.parse.parse_qsl(p.query, keep_blank_values=True) if not TRACKING_PARAMS.match(k)])
     path = p.path.rstrip("/") or "/"
+    if host in X_HOSTS:  # ?s=20, ?t=… : paramètres de partage, même post
+        host, query = "x.com", ""
     return urllib.parse.urlunsplit(("https", host, path, query, ""))
 
 
@@ -724,8 +727,12 @@ def validate_impact(results: dict[str, dict], start: dt.date, end: dt.date) -> t
         for topic in dicts(data.get("topics")):
             evidence = []
             for ev in dicts(topic.get("evidence")):
-                c = checks.get(str(ev.get("url", "")).strip())
+                url = str(ev.get("url", "")).strip()
+                c = checks.get(url)
                 claimed = parse_day(str(ev.get("date", "")))
+                # Une page tendance X atteste le bruit d'une époque, jamais l'impact.
+                if is_x_trending(url) and ev.get("role") != "perception":
+                    continue
                 if (c and c["verdict"] != "dead" and claimed
                         and in_window(parse_day(c["page_date"] or ""), start, end, before=60, after=1)
                         and in_window(claimed, start, end, before=60, after=1)):
@@ -873,6 +880,13 @@ def method_section(ed: Edition, stats_by_step: dict[str, dict], writer: str, mis
             + (f", {st['unverifiable']} liens non vérifiables automatiquement (site qui bloque les robots)"
                if st.get("unverifiable") else "")
             + f" ; écartés : {st['rejected']} (lien mort ou hors période).")
+        if (tr := st.get("trends")) is not None:
+            lines.append(
+                f"- Relevé des tendances X, {step.lower()} : "
+                + ("en échec, recherche faite sans pistes." if tr.get("error") else
+                   f"{tr['kept']} tendance(s) IA vérifiée(s) ({tr['rejected']} écartée(s)), données comme pistes aux"
+                   f" recherches ; {tr.get('covered', 0)} couverte(s) par un sujet sourcé,"
+                   f" {tr.get('uncovered', 0)} sans source trouvée."))
         if st.get("x_buzz") or st.get("x_posts") or st.get("x_trends_off_topic"):
             lines.append(
                 f"- Signal X (Twitter), {step.lower()} : {st.get('x_buzz', 0)} sujet(s) jugé(s) très discuté(s)"
@@ -913,30 +927,107 @@ def pick_providers(requested: list[str]) -> tuple[list[str], list[str]]:
 # --------------------------------------------------------------------------- éditions
 
 
-def research_step(ed: Edition, workdir: Path, label: str, prompt: str, providers: list[str],
-                  start: dt.date, end: dt.date) -> tuple[list[dict], dict, list[str]]:
+def validate_trends(results: dict[str, dict], start: dt.date, end: dt.date) -> tuple[list[dict], list[dict], dict]:
+    """Garde les pages tendances X existantes, datées de la période et qui parlent d'IA."""
+    proposed: dict[str, dict] = {}
+    for provider, data in results.items():
+        for t in data.get("trends", []):
+            if not isinstance(t, dict):
+                continue
+            url = str(t.get("url", "")).strip()
+            entry = proposed.setdefault(normalize_url(url), {"url": url, "subject": "", "found_by": []})
+            entry["subject"] = entry["subject"] or str(t.get("subject", "")).strip()
+            if provider not in entry["found_by"]:
+                entry["found_by"].append(provider)
+    candidates = {k: e for k, e in proposed.items() if is_x_trending(e["url"])}
+    checks = check_urls({e["url"] for e in candidates.values()})
+    kept, rejected = [], []
+    for key, e in proposed.items():
+        c = checks.get(e["url"], {})
+        trend = c.get("x_trend") or {}
+        day = x_post_date(e["url"])
+        reason = None
+        if key not in candidates:
+            reason = "pas une page tendance X"
+        elif c.get("verdict") != "ok":
+            reason = f"page illisible ({c.get('reason') or c.get('verdict')})"
+        elif not in_window(day, start, end, before=1, after=1):
+            reason = f"tendance du {day}, hors période"
+        elif not is_ai_related(f"{trend.get('title', '')} {trend.get('description', '')}"):
+            reason = "sans rapport avec l'IA"
+        if reason:
+            rejected.append({**e, "reason": reason})
+            continue
+        kept.append({"url": e["url"], "date": day.isoformat(), "title": trend.get("title", ""),
+                     "description": trend.get("description", ""), "found_by": e["found_by"]})
+    kept.sort(key=lambda t: (t["date"], t["url"]))
+    for i, t in enumerate(kept, 1):
+        t["id"] = f"T{i}"
+    stats = {"per_provider": {p: len(d.get("trends", [])) for p, d in results.items()},
+             "kept": len(kept), "rejected": len(rejected)}
+    return kept, rejected, stats
+
+
+def scan_trends(ed: Edition, workdir: Path, label: str, providers: list[str], start: dt.date, end: dt.date,
+                purpose: str) -> tuple[list[dict], dict]:
+    """Relevé des tendances X ; un échec n'arrête pas le passage, la recherche se fait alors sans pistes."""
+    prompt = render("trends.md", today=fr_date(today_paris()), period=fr_range(start, end),
+                    period_start=start.isoformat(), period_end=end.isoformat(), purpose=purpose)
+    try:
+        results = research_all(prompt, SCHEMAS / "trends.schema.json", workdir, label, providers)
+    except PipelineError as exc:
+        log(f"{label} : relevé des tendances abandonné ({exc})")
+        return [], {"kept": 0, "rejected": 0, "error": str(exc)}
+    for provider, data in results.items():
+        save_json(ed.raw_dir / f"{label}.{provider}.json", data)
+    kept, rejected, stats = validate_trends(results, start, end)
+    save_json(ed.raw_dir / f"{label}.validated.json", {"kept": kept, "rejected": rejected, "stats": stats})
+    log(f"{label} : {stats}")
+    return kept, stats
+
+
+def trends_for_prompt(trends: list[dict]) -> str:
+    if not trends:
+        return "(aucune tendance vérifiée pour cette période)"
+    return json.dumps([{k: t[k] for k in ("id", "url", "date", "title", "description")} for t in trends],
+                      ensure_ascii=False, indent=1)
+
+
+def research_step(ed: Edition, workdir: Path, label: str, providers: list[str], start: dt.date, end: dt.date,
+                  purpose: str, target: str) -> tuple[list[dict], dict, list[str], list[dict]]:
+    """Relevé des tendances, recherche guidée par ces tendances, vérification, contrôle de couverture.
+
+    Rend (sujets retenus, statistiques, fournisseurs en échec, tendances qu'aucun sujet ne couvre)."""
+    trends, trend_stats = scan_trends(ed, workdir, f"{label}.trends", providers, start, end, purpose)
+    prompt = render(
+        "research.md", today=fr_date(today_paris()), period=fr_range(start, end),
+        period_start=start.isoformat(), period_end=end.isoformat(), purpose=purpose, target=target,
+        trends=trends_for_prompt(trends))
     results = research_all(prompt, SCHEMAS / "research.schema.json", workdir, label, providers)
     for provider, data in results.items():
         save_json(ed.raw_dir / f"{label}.{provider}.json", data)
     kept, rejected, stats = validate_items(results, start, end)
-    save_json(ed.raw_dir / f"{label}.validated.json", {"kept": kept, "rejected": rejected, "stats": stats})
+    cited = {normalize_url(u) for e in kept for u in [e["url"], *e["other_urls"]]}
+    uncovered = [t for t in trends if normalize_url(t["url"]) not in cited]
+    stats["trends"] = {**trend_stats, "covered": len(trends) - len(uncovered), "uncovered": len(uncovered)}
+    save_json(ed.raw_dir / f"{label}.validated.json",
+              {"kept": kept, "rejected": rejected, "trends_uncovered": uncovered, "stats": stats})
     log(f"{label} : {stats}")
     failed = [p for p in providers if p not in results]
-    return kept, stats, [f"{p} (échec)" for p in failed]
+    return kept, stats, [f"{p} (échec)" for p in failed], uncovered
 
 
 def build_weekly(ed: Edition, workdir: Path, providers: list[str], missing: list[str]) -> list[Path]:
-    prompt = render(
-        "research.md", today=fr_date(today_paris()), period=fr_range(ed.start, ed.end),
-        period_start=ed.start.isoformat(), period_end=ed.end.isoformat(),
+    items, stats, failed, uncovered = research_step(
+        ed, workdir, "research", providers, ed.start, ed.end,
         purpose="l'édition hebdomadaire ai-weekly", target="25 à 45")
-    items, stats, failed = research_step(ed, workdir, "research", prompt, providers, ed.start, ed.end)
     if len(items) < 8:
         raise PipelineError(f"seulement {len(items)} sujets retenus : trop peu pour publier")
     synth_prompt = render(
         "synthesis-weekly.md", period=fr_range(ed.start, ed.end), published=fr_date(ed.published),
-        items_json=json.dumps(items, ensure_ascii=False, indent=1))
-    allowed = {u for e in items for u in [e["url"], *e["other_urls"]]}
+        items_json=json.dumps(items, ensure_ascii=False, indent=1),
+        trends_json=trends_for_prompt(uncovered))
+    allowed = {u for e in items for u in [e["url"], *e["other_urls"]]} | {t["url"] for t in uncovered}
     body, writer = synthesize(synth_prompt, workdir, "synthesis", providers, allowed)
     text = (header(ed, f"ai-weekly du {fr_date(ed.published)}", f"Semaine {fr_range(ed.start, ed.end)}")
             + body.strip() + "\n" + method_section(ed, {"Recherches": stats}, writer, missing + failed))
@@ -951,13 +1042,11 @@ def build_monthly(ed: Edition, workdir: Path, providers: list[str], missing: lis
     gap_items, stats_by_step, failed = [], {}, []
     for i, (gs, ge) in enumerate(gaps, 1):
         days = (ge - gs).days + 1
-        prompt = render(
-            "research.md", today=fr_date(today_paris()), period=fr_range(gs, ge),
-            period_start=gs.isoformat(), period_end=ge.isoformat(),
+        items, stats, f, _ = research_step(
+            ed, workdir, f"gap{i}", providers, gs, ge,
             purpose=f"l'édition mensuelle ai-monthly de {MOIS[ed.start.month - 1]} {ed.start.year} "
                     "(jours non couverts par les éditions hebdomadaires)",
             target=f"{max(5, min(45, days * 4))} environ")
-        items, stats, f = research_step(ed, workdir, f"gap{i}", prompt, providers, gs, ge)
         gap_items += items
         failed += f
         stats_by_step[f"Recherche complémentaire {fr_range(gs, ge)}"] = stats
@@ -986,6 +1075,21 @@ def build_monthly(ed: Edition, workdir: Path, providers: list[str], missing: lis
     return [ed.path, ed.raw_dir]
 
 
+def archived_trends(start: dt.date, end: dt.date) -> list[dict]:
+    """Tendances X vérifiées lors des passages précédents (raw/), datées de [start, end], sans doublon."""
+    found: dict[str, dict] = {}
+    for path in sorted((ROOT / "raw").glob("*/*/*trends.validated.json")):
+        try:
+            data = json.loads(path.read_text(encoding="utf-8"))
+        except (OSError, json.JSONDecodeError):
+            continue
+        for t in data.get("kept", []):
+            day = parse_day(str(t.get("date", "")))
+            if isinstance(t, dict) and t.get("url") and day and start <= day <= end:
+                found.setdefault(normalize_url(t["url"]), t)
+    return sorted(found.values(), key=lambda t: (t["date"], t["url"]))
+
+
 def build_yearly(ed: Edition, workdir: Path, providers: list[str], missing: list[str]) -> list[Path]:
     monthlies = editions_overlapping("monthly", ed.start, ed.end)
     monthly_periods = [(parse_day(m["period_start"]), parse_day(m["period_end"])) for _, m, _ in monthlies]
@@ -998,9 +1102,11 @@ def build_yearly(ed: Edition, workdir: Path, providers: list[str], missing: list
         for p, m, b in [*monthlies, *weeklies]) or "(aucune archive)"
     prev = Edition("yearly", dt.date(ed.published.year - 1, 12, 20))
     previous = strip_method_section(read_front_matter(prev.path)[1]) if prev.path.exists() else ""
+    trends = archived_trends(ed.start, ed.end)
+    trends_text = "\n".join(f"- {t['date']} · {t.get('title', '')} · {t['url']}" for t in trends) or "(aucune)"
     research_prompt = render(
         "research-yearly.md", year=str(ed.published.year), today=fr_date(today_paris()),
-        start_note=NEWSLETTER_START_FR, archive=archive,
+        start_note=NEWSLETTER_START_FR, archive=archive, trends=trends_text,
         previous=previous or "(pas de rétrospective l'année précédente)")
     results = research_all(research_prompt, SCHEMAS / "impact.schema.json", workdir, "impact", providers)
     for provider, data in results.items():
@@ -1020,6 +1126,7 @@ def build_yearly(ed: Edition, workdir: Path, providers: list[str], missing: list
     body, writer = synthesize(synth_prompt, workdir, "synthesis", providers, allowed)
     failed = [f"{p} (échec)" for p in providers if p not in results]
     extra = (f"Archives utilisées : {len(monthlies)} édition(s) mensuelle(s), {len(weeklies)} hebdomadaire(s)"
+             + f", {len(trends)} tendance(s) X archivée(s)"
              + ("" if prev.path.exists() else " ; pas de rétrospective l'année précédente") + ".")
     text = (header(ed, f"ai-yearly, rétrospective {ed.published.year}",
                    f"L'année {ed.published.year} en IA, publiée le {fr_date(ed.published)}")

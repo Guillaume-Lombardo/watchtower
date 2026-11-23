@@ -76,10 +76,20 @@ class DueTests(unittest.TestCase):
         self.assertIn(("yearly", D(2026, 12, 20)), self.kinds(D(2026, 12, 31)))
 
 
+def trend_url(day, n=0):
+    """Page tendance X dont l'identifiant encode midi (heure de Paris) du jour donné."""
+    ms = int(dt.datetime(day.year, day.month, day.day, 12, tzinfo=wt.TZ).timestamp() * 1000)
+    return f"https://x.com/i/trending/{((ms - wt.X_EPOCH_MS) << 22) + n}"
+
+
 class HelperTests(unittest.TestCase):
     def test_normalize_url(self):
         self.assertEqual(wt.normalize_url("http://www.Example.com/a/?utm_source=x&id=2#top"),
                          "https://example.com/a?id=2")
+
+    def test_normalize_url_drops_x_share_params(self):
+        self.assertEqual(wt.normalize_url("https://twitter.com/a/status/123456789?s=20&t=abc"),
+                         wt.normalize_url("https://x.com/a/status/123456789"))
 
     def test_uncovered_ranges(self):
         covered = [(D(2026, 11, 2), D(2026, 11, 8)), (D(2026, 11, 9), D(2026, 11, 15))]
@@ -281,6 +291,40 @@ class HelperTests(unittest.TestCase):
                                           "description": "Critics like developer Theo call it verbose; OpenAI's team replies."})
         self.assertEqual(res["page_date"], "2026-11-17")
 
+    def test_validate_trends(self):
+        start, end = D(2026, 11, 16), D(2026, 11, 22)
+        ai, off, old = (trend_url(D(2026, 11, 17)), trend_url(D(2026, 11, 18), 1), trend_url(D(2026, 10, 1)))
+        dead = trend_url(D(2026, 11, 19), 2)
+        results = {"codex": {"trends": [{"url": ai, "subject": "GPT"}, {"url": off, "subject": "Foot"},
+                                        {"url": "https://x.com/OpenAI/status/2122750126297161811", "subject": "p"},
+                                        {"url": old, "subject": "vieux"}, None]},
+                   "claude": {"trends": [{"url": ai + "?s=20", "subject": "GPT bis"}, {"url": dead, "subject": "?"}]}}
+        text = {"title": "OpenAI lance GPT-6.2", "description": "Retours mitigés."}
+        checks = {ai: {"verdict": "ok", "x_trend": text}, off: {"verdict": "ok", "x_trend": {"title": "Le PSG gagne"}},
+                  old: {"verdict": "ok", "x_trend": text}, dead: {"verdict": "dead", "reason": "HTTP 404"}}
+        with mock.patch.object(wt, "check_urls", lambda urls: {u: checks[u] for u in urls}):
+            kept, rejected, stats = wt.validate_trends(results, start, end)
+        self.assertEqual([(t["id"], t["url"], t["date"], t["title"], t["found_by"]) for t in kept],
+                         [("T1", ai, "2026-11-17", "OpenAI lance GPT-6.2", ["codex", "claude"])])
+        self.assertEqual(sorted(r["reason"] for r in rejected),
+                         ["page illisible (HTTP 404)", "pas une page tendance X", "sans rapport avec l'IA",
+                          "tendance du 2026-10-01, hors période"])
+        self.assertEqual(stats["per_provider"], {"codex": 5, "claude": 2})
+
+    def test_trend_page_is_never_impact_evidence(self):
+        trend = trend_url(D(2026, 3, 2))
+        ev = {"claim": "c", "url": trend, "source": "X", "date": "2026-03-02", "role": "impact"}
+        checks = {trend: {"verdict": "ok", "page_date": "2026-03-02"}}
+        with mock.patch.object(wt, "check_urls", lambda urls: {u: checks[u] for u in urls}):
+            kept, _, _ = wt.validate_impact({"codex": {"topics": [{"topic": "T", "evidence": [ev]}]}},
+                                            D(2026, 1, 1), D(2026, 12, 19))
+            self.assertEqual(kept, [])
+            kept, _, _ = wt.validate_impact(
+                {"codex": {"topics": [{"topic": "T", "evidence": [{**ev, "role": "perception"},
+                                                                  {**ev, "url": trend, "role": "impact"}]}]}},
+                D(2026, 1, 1), D(2026, 12, 19))
+            self.assertEqual(kept, [])
+
     def test_render_refuses_missing_variable(self):
         with self.assertRaises(wt.PipelineError):
             wt.render("synthesis-weekly.md", period="x")
@@ -290,7 +334,7 @@ class HelperTests(unittest.TestCase):
         for name in ("synthesis-weekly.md", "synthesis-monthly.md", "synthesis-yearly.md"):
             with self.subTest(name=name):
                 self.assertIn("{{style}}", (wt.PROMPTS / name).read_text(encoding="utf-8"))
-        text = wt.render("synthesis-weekly.md", period="p", published="d", items_json="[]")
+        text = wt.render("synthesis-weekly.md", period="p", published="d", items_json="[]", trends_json="[]")
         self.assertIn(style, text)
         self.assertNotIn("{{style}}", text)
 

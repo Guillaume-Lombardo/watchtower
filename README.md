@@ -20,13 +20,17 @@ Les fichiers sont nommés `AAAA-MM-JJ_<newsletter>.md`, d'après leur date de pa
 
 ## Méthode
 
+0. **Relevé des tendances X.** Les deux assistants listent les pages tendances X (Twitter) de la
+   période liées à l'IA. Le script les relit (existence, date, titre) et ne garde que celles qui
+   parlent d'IA. Elles servent de pistes communes aux deux recherches.
 1. **Deux recherches indépendantes.** Deux assistants (Codex et Claude) reçoivent le même prompt et
    cherchent chacun de leur côté sur le web. Un sujet trouvé par les deux est confirmé ; un sujet
    trouvé par un seul est vérifié avec plus de prudence.
    Les recherches regardent aussi X (Twitter) pour repérer les sujets qui font parler : chaque
    sujet porte une estimation de sa discussion sur X (`x_buzz`), et l'hebdo a une section « Ce qui
    fait parler sur X ». C'est un avis des assistants sur ce qu'ils ont vu, pas une mesure : le
-   pipeline n'a pas accès à l'API de X.
+   pipeline n'a pas accès à l'API de X. Les tendances qu'aucun sujet sourcé ne couvre sont
+   publiées dans `raw/` et comptées dans la section « Méthode ».
 2. **Vérification des liens par script, sans IA.** Chaque lien est ouvert : les pages absentes et
    celles datées hors de la période sont écartées. Un lien X doit être un post ou une page
    tendance, dont la date est lue dans l'identifiant ; une page tendance n'est gardée que si son
@@ -40,7 +44,8 @@ Les fichiers sont nommés `AAAA-MM-JJ_<newsletter>.md`, d'après leur date de pa
 
 L'édition mensuelle part des éditions hebdomadaires du mois, complétées par une recherche sur les
 jours qu'aucune ne couvre. La rétrospective part des archives de l'année et d'une recherche
-d'impact dédiée, qui confronte pour chaque sujet la perception de l'époque (source d'alors) et
+d'impact dédiée, qui confronte pour chaque sujet la perception de l'époque (source d'alors, et
+tendances X archivées dans `raw/`) et
 l'impact constaté (source récente).
 
 Les limites sont celles de l'outil : une IA peut mal résumer une source, rater un sujet ou en
