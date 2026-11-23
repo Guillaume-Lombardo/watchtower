@@ -18,9 +18,12 @@ Périmètre, par ordre de priorité :
 ## Méthode
 
 - Cherche activement sur le web, dans plusieurs types de sources : annonces officielles (blogs des labos et des sociétés, communiqués, notes de version), presse tech et économique anglophone et francophone, arXiv, GitHub, textes officiels.
+- Regarde aussi ce qui circule sur **X (Twitter)** pendant la période : comptes officiels des labos et des sociétés, chercheurs, ingénieurs, discussions IA qui ont beaucoup tourné (démonstrations, polémiques, réactions à une sortie). X sert d'abord à repérer les sujets qui font parler : pour chaque sujet repéré là, cherche l'annonce officielle ou un article de presse.
+- Passe en revue les **tendances X de la période qui concernent l'IA** : cherche les pages tendances (`x.com/i/trending/…`) avec des termes du périmètre (IA, noms de labos, de modèles, de puces, d'outils). Ignore les tendances sans rapport avec l'IA, même si elles citent une société tech (politique, sport, vie privée d'un dirigeant, résultats sans lien avec l'IA). Chaque tendance IA retenue s'ajoute aux `other_urls` du sujet qu'elle concerne, ou devient un sujet si tu trouves une source primaire ou de presse. Un script relit chaque page tendance et écarte celles qui ne parlent pas d'IA.
 - Ne retiens que ce qui a été publié ou annoncé pendant la période. Un article paru jusqu'à un jour après est acceptable s'il rapporte un fait de la période.
 - Pour chaque sujet, `url` est la source la plus primaire possible : annonce officielle, puis article de presse qui la rapporte, jamais un agrégateur ou une newsletter quand la source d'origine existe. Ajoute dans `other_urls` jusqu'à trois sources indépendantes qui confirment ou éclairent.
 - **Chaque URL doit être une page que tu as effectivement ouverte ou vue dans un résultat de recherche pendant ce travail.** Ne reconstruis jamais une URL de mémoire et n'en invente pas. Pas de page d'accueil, de page de tag, de résultat de recherche ni de lien raccourci. Un script vérifiera chaque lien et écartera les liens morts et les pages datées hors période.
+- Un post X (`https://x.com/<compte>/status/<identifiant>`) peut être `url` seulement s'il est l'annonce d'origine, publiée par l'acteur lui-même (compte officiel de la société, auteur du papier) ; sinon, mets-le dans `other_urls` en complément d'une source primaire ou de presse. Les pages tendances de X (`https://x.com/i/trending/<identifiant>`) résument un sujet qui a fait parler : mets-les dans `other_urls` comme preuve du buzz, jamais dans `url`. Jamais de profil, de recherche X, de page « Explorer » ni de lien `t.co`. Un sujet qui n'existe que par la discussion sur X (démonstration virale, polémique) n'est retenu que si un média l'a repris ou s'il vient d'un compte qui fait autorité sur le sujet.
 - Une rumeur ou une fuite peut être retenue si un média sérieux la rapporte : `kind` = `rumeur`, et dis qui la rapporte.
 - Un sujet = un événement. Ne fusionne pas des annonces sans rapport ; ne découpe pas un même événement en plusieurs sujets.
 - Couvre les annonces qui ne viennent pas des États-Unis (Europe, Chine, reste du monde).
@@ -34,6 +37,8 @@ Périmètre, par ordre de priorité :
 - `date` : date de publication ou de l'annonce, au format `AAAA-MM-JJ`.
 - `source` : nom du média ou de l'éditeur de `url`.
 - `importance` : de 1 (anecdotique) à 5 (majeur pour le secteur).
-- `notes` : tes remarques sur la recherche (thèmes peu couverts, doutes, sujets écartés faute de source).
+- `x_buzz` : à quel point le sujet a été discuté sur X pendant la période. `fort` : très discuté (nombreux posts et reprises, ou article de presse qui décrit la viralité) ; `moyen` : discussion visible ; `faible` : peu de posts vus ; `inconnu` : tu n'as rien pu voir. Base-toi sur ce que tu as vu, pas sur l'importance du sujet ; dans le doute, `inconnu`.
+- `x_buzz_notes` : une phrase sur ce qui se dit sur X (réactions, critiques, démonstrations, ce qui est contesté), vide si `x_buzz` vaut `faible` ou `inconnu`. Ce que tu y écris doit être visible dans une page de `url` ou `other_urls` (post X, page tendance, article qui décrit la discussion) : ajoute-la. Ne nomme une personne que si son post y figure. Aucun nombre de vues, de likes ou de republications.
+- `notes` : tes remarques sur la recherche (thèmes peu couverts, doutes, sujets écartés faute de source, accès à X limité).
 
 Réponds uniquement avec l'objet JSON demandé.

@@ -18,7 +18,7 @@ D = dt.date
 def fake_item(i, day):
     return {"title": f"Sujet {i}", "summary": "Résumé.", "category": "modeles", "kind": "fait",
             "date": day.isoformat(), "source": "Ex", "url": f"https://news.example/{day}/{i}",
-            "other_urls": [], "importance": 3}
+            "other_urls": [], "importance": 3, "x_buzz": "fort", "x_buzz_notes": "Discuté."}
 
 
 def fake_runner(provider):
@@ -67,6 +67,7 @@ class PipelineTests(unittest.TestCase):
         text = weekly.read_text()
         self.assertIn("period_start: 2026-11-16", text)
         self.assertIn("## Méthode", text)
+        self.assertIn("- Signal X (Twitter), recherches : 20 sujet(s) jugé(s) très discuté(s)", text)
         self.assertTrue((self.root / "raw/weekly/2026-11-23/research.validated.json").exists())
 
         monthly = self.produce("monthly", D(2026, 12, 1))
