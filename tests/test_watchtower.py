@@ -267,13 +267,14 @@ class HelperTests(unittest.TestCase):
 
     def test_is_ai_related(self):
         for text in ("OpenAI Launches GPT-6.2 Astra", "Anthropic IPO", "Les GPU de Nvidia", "Une IA générative",
-                     "AI agents take over", "Claude et Gemini en tête des benchmarks", "Qwen4-Max released",
-                     "Nvidia earnings"):
+                     "AI agents take over", "Claude et Gemini se répondent", "Qwen4-Max released",
+                     "Nvidia earnings", "Grok 4 launches", "Codex CLI gets a new release", "Claude Opus 5.5"):
             with self.subTest(text=text):
                 self.assertTrue(wt.is_ai_related(text))
         for text in ("J'ai vu le match", "Real Madrid wins", "Election results", "Taylor Swift tour", "ai",
                      "Runway closed at Heathrow", "Hommage à Claude François", "Mistral : rafales à 120 km/h",
-                     "Horoscope Gemini", "Free agents signing day"):
+                     "Horoscope Gemini", "Free agents signing day",
+                     "Airport agents inspect runway damage"):
             with self.subTest(text=text):
                 self.assertFalse(wt.is_ai_related(text))
 
@@ -344,11 +345,14 @@ class HelperTests(unittest.TestCase):
         item = {"title": "T", "summary": "S", "category": "modeles", "kind": "fait", "date": "2026-11-10",
                 "source": "Ex", "url": "https://ok.example/a", "other_urls": ["https://x.com/a/status/1"],
                 "importance": 4, "x_buzz": "fort", "x_buzz_notes": "Untel critique le modèle."}
+        tco = {**item, "url": "https://ok.example/b", "other_urls": ["https://t.co/abc"]}
         checks = {"https://ok.example/a": {"verdict": "ok", "page_date": "2026-11-10"},
+                  "https://ok.example/b": {"verdict": "ok", "page_date": "2026-11-10"},
+                  "https://t.co/abc": {"verdict": "dead", "reason": "lien raccourci", "page_date": None},
                   "https://x.com/a/status/1": {"verdict": "dead", "reason": "HTTP 404", "page_date": None}}
         with mock.patch.object(wt, "check_urls", lambda urls: {u: checks[u] for u in urls}):
-            kept, _, _ = wt.validate_items({"codex": {"items": [item]}}, start, end)
-        self.assertEqual((kept[0]["x_buzz"], kept[0]["x_buzz_notes"]), ("inconnu", ""))
+            kept, _, _ = wt.validate_items({"codex": {"items": [item, tco]}}, start, end)
+        self.assertEqual([(e["x_buzz"], e["x_buzz_notes"]) for e in kept], [("inconnu", "")] * 2)
 
     def test_trend_page_is_never_impact_evidence(self):
         trend = trend_url(D(2026, 3, 2))
@@ -371,13 +375,14 @@ class HelperTests(unittest.TestCase):
         topics = {"codex": {"topics": [{"topic": "T", "evidence": [perception, impact]}]}}
         for x_trend, archived, expected in (({"title": "Le PSG gagne"}, set(), 1),
                                             ({"title": "OpenAI lance Sora"}, set(), 2),
-                                            ({}, {wt.normalize_url(trend)}, 2)):
+                                            ({}, {wt.normalize_url(trend): "2026-03-02"}, 2),
+                                            ({}, {wt.normalize_url(trend): "2025-03-02"}, 1)):
             checks = {trend: {"verdict": "ok" if x_trend else "unverifiable", "page_date": "2026-03-02",
                               "x_trend": x_trend},
                       "https://i.example/1": {"verdict": "ok", "page_date": "2026-11-01"}}
             with self.subTest(x_trend=x_trend), \
                     mock.patch.object(wt, "check_urls", lambda urls: {u: checks[u] for u in urls}):
-                kept, _, _ = wt.validate_impact(topics, D(2026, 1, 1), D(2026, 12, 19), archived)
+                kept, _, _ = wt.validate_impact(topics, D(2026, 1, 1), D(2026, 12, 19), archived or None)
                 self.assertEqual(len(kept[0]["evidence"]), expected)
 
     def test_render_refuses_missing_variable(self):

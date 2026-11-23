@@ -91,11 +91,13 @@ AI_TERMS = re.compile(
     r"openai|chatgpt|gpt-?\d[\w.]*|anthropic|deepmind|google ai|meta ai|xai|"
     r"qwen|deepseek|zhipu|hugging ?face|stability ai|midjourney|elevenlabs|nvidia|cerebras|"
     r"thinking machines)(?:-?\d[\w.]*)?\b", re.I)
-# Termes qui ont aussi un autre sens (prénom, vent, signe, aviation…) : il en faut deux distincts.
+# Noms de produits qui ont aussi un autre sens (prénom, vent, signe, aviation…) : il en faut deux distincts,
+# sauf s'ils portent une version ou un suffixe de produit (« Grok 4 », « Codex CLI »). Limite connue : un prénom
+# suivi d'un nombre passe (« Claude 2 fois… ») ; les recherches ne proposent de toute façon que des tendances IA.
 AI_WEAK_TERMS = re.compile(
     r"\b(claude|gemini|grok|groq|llama|mistral|sora|codex|copilot|cursor|windsurf|perplexity|runway|kimi|"
-    r"moonshot|minimax|glm|ernie|blackwell|rubin|cuda|tsmc|gpus?|benchmarks?|datacenters?|data centers?|"
-    r"humanoids?|robotics?|robots?|agents?)(?:-?\d[\w.]*)?\b", re.I)
+    r"moonshot|minimax|glm|ernie|blackwell|rubin|cuda)"
+    r"(\s?-?\d[\w.]*|\s(?:cli|api|code|app|pro|ultra|opus|sonnet|haiku|fable))?\b", re.I)
 X_EPOCH_MS = 1288834974657
 BUZZ_LEVELS = ["inconnu", "faible", "moyen", "fort"]
 TRACKING_PARAMS = re.compile(r"^(utm_|fbclid$|gclid$|mc_|ref$|ref_src$|cmpid$|ocid$|guccounter$)")
@@ -527,7 +529,8 @@ def x_trend_text(body: str) -> dict:
 def is_ai_related(text: str) -> bool:
     if AI_ACRONYMS.search(text) or AI_TERMS.search(text):
         return True
-    return len({m.group(1).lower().rstrip("s") for m in AI_WEAK_TERMS.finditer(text)}) >= 2
+    weak = list(AI_WEAK_TERMS.finditer(text))
+    return any(m.group(2) for m in weak) or len({m.group(1).lower() for m in weak}) >= 2
 
 
 def check_url(url: str) -> dict:
@@ -679,7 +682,7 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
         main, extra = candidates[0], candidates[1:]
         level, notes = buzz(item.get("x_buzz")), str(item.get("x_buzz_notes") or "").strip()
         # Le buzz s'appuyait sur des liens X tous écartés : il n'est plus étayé.
-        if (any(host_of(u) in X_HOSTS for u in [url, *others])
+        if (any(host_of(u) in X_HOSTS | {"t.co"} for u in [url, *others])
                 and not any(host_of(u) in X_HOSTS for u in candidates)):
             level, notes = "inconnu", ""
         key = normalize_url(main)
@@ -737,7 +740,7 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
 
 
 def validate_impact(results: dict[str, dict], start: dt.date, end: dt.date,
-                    archived: set[str] = frozenset()) -> tuple[list[dict], list[dict], dict]:
+                    archived: dict[str, str] | None = None) -> tuple[list[dict], list[dict], dict]:
     """Vérifie les preuves de la recherche d'impact ; un sujet sans preuve valide est écarté."""
     def dicts(values) -> list[dict]:
         return [v for v in values if isinstance(v, dict)] if isinstance(values, list) else []
@@ -759,8 +762,10 @@ def validate_impact(results: dict[str, dict], start: dt.date, end: dt.date,
                     trend = (c or {}).get("x_trend") or {}
                     if ev.get("role") != "perception":
                         continue
-                    if normalize_url(url) in archived and claimed:
-                        evidence.append({**ev, "link_check": "archived"})
+                    day = parse_day((archived or {}).get(normalize_url(url), ""))
+                    if day:
+                        if claimed and in_window(day, start, end, before=60, after=1):
+                            evidence.append({**ev, "date": day.isoformat(), "link_check": "archived"})
                         continue
                     if not is_ai_related(f"{trend.get('title', '')} {trend.get('description', '')}"):
                         continue
@@ -1142,7 +1147,8 @@ def build_yearly(ed: Edition, workdir: Path, providers: list[str], missing: list
     results = research_all(research_prompt, SCHEMAS / "impact.schema.json", workdir, "impact", providers)
     for provider, data in results.items():
         save_json(ed.raw_dir / f"impact.{provider}.json", data)
-    topics, rejected, stats = validate_impact(results, ed.start, ed.end, {normalize_url(t["url"]) for t in trends})
+    topics, rejected, stats = validate_impact(results, ed.start, ed.end,
+                                              {normalize_url(t["url"]): t["date"] for t in trends})
     save_json(ed.raw_dir / "impact.validated.json", {"kept": topics, "rejected": rejected, "stats": stats})
     if len(topics) < 6:
         raise PipelineError(f"seulement {len(topics)} sujets d'impact retenus : trop peu pour publier")
