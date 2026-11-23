@@ -95,7 +95,7 @@ AI_TERMS = re.compile(
 # sauf s'ils portent une version ou un suffixe de produit (« Grok 4 », « Codex CLI »). Limite connue : un prénom
 # suivi d'un nombre passe (« Claude 2 fois… ») ; les recherches ne proposent de toute façon que des tendances IA.
 AI_WEAK_TERMS = re.compile(
-    r"\b(claude|gemini|grok|groq|llama|mistral|sora|codex|copilot|cursor|windsurf|perplexity|runway|kimi|"
+    r"\b(claude|gemini|grok|groq|llama|mistral|sora|codex|copilot|cursor|windsurf|perplexity|kimi|"
     r"moonshot|minimax|glm|ernie|blackwell|rubin|cuda)"
     r"(\s?-?\d[\w.]*|\s(?:cli|api|code|app|pro|ultra|opus|sonnet|haiku|fable))?\b", re.I)
 X_EPOCH_MS = 1288834974657

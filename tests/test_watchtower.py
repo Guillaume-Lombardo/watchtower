@@ -274,7 +274,7 @@ class HelperTests(unittest.TestCase):
         for text in ("J'ai vu le match", "Real Madrid wins", "Election results", "Taylor Swift tour", "ai",
                      "Runway closed at Heathrow", "Hommage à Claude François", "Mistral : rafales à 120 km/h",
                      "Horoscope Gemini", "Free agents signing day",
-                     "Airport agents inspect runway damage"):
+                     "Airport agents inspect runway damage", "Runway 27 closed at Heathrow"):
             with self.subTest(text=text):
                 self.assertFalse(wt.is_ai_related(text))
 
