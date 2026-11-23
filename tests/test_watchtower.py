@@ -267,10 +267,13 @@ class HelperTests(unittest.TestCase):
 
     def test_is_ai_related(self):
         for text in ("OpenAI Launches GPT-6.2 Astra", "Anthropic IPO", "Les GPU de Nvidia", "Une IA générative",
-                     "AI agents take over", "Proof of Riemann hypothesis with Claude", "Qwen4-Max released"):
+                     "AI agents take over", "Claude et Gemini en tête des benchmarks", "Qwen4-Max released",
+                     "Nvidia earnings"):
             with self.subTest(text=text):
                 self.assertTrue(wt.is_ai_related(text))
-        for text in ("J'ai vu le match", "Real Madrid wins", "Election results", "Taylor Swift tour", "ai"):
+        for text in ("J'ai vu le match", "Real Madrid wins", "Election results", "Taylor Swift tour", "ai",
+                     "Runway closed at Heathrow", "Hommage à Claude François", "Mistral : rafales à 120 km/h",
+                     "Horoscope Gemini", "Free agents signing day"):
             with self.subTest(text=text):
                 self.assertFalse(wt.is_ai_related(text))
 
@@ -311,6 +314,42 @@ class HelperTests(unittest.TestCase):
                           "tendance du 2026-10-01, hors période"])
         self.assertEqual(stats["per_provider"], {"codex": 5, "claude": 2})
 
+    def test_validate_trends_survives_malformed_urls_and_keeps_to_the_period(self):
+        start, end = D(2026, 11, 16), D(2026, 11, 22)
+        monday = trend_url(D(2026, 11, 23))
+        results = {"codex": {"trends": [{"url": "https://[x.com/i/trending/1", "subject": "?"},
+                                        {"url": monday, "subject": "IA"}]}}
+        checks = {monday: {"verdict": "ok", "x_trend": {"title": "OpenAI", "description": ""}}}
+        with mock.patch.object(wt, "check_urls", lambda urls: {u: checks[u] for u in urls}):
+            kept, rejected, _ = wt.validate_trends(results, start, end)
+        self.assertEqual(kept, [])
+        self.assertEqual(sorted(r["reason"] for r in rejected),
+                         ["pas une page tendance X", "tendance du 2026-11-23, hors période"])
+
+    def test_trends_scan_is_tried_once(self):
+        calls = []
+
+        def failing(prompt, workdir, label, schema, search):
+            calls.append(schema.name)
+            raise wt.PipelineError("délai")
+        with tempfile.TemporaryDirectory() as tmp, \
+                mock.patch.dict(wt.RUNNERS, {"codex": failing}):
+            with self.assertRaises(wt.PipelineError):
+                wt.research_all("p", wt.SCHEMAS / "trends.schema.json", Path(tmp), "t", ["codex"])
+        self.assertEqual(calls, ["trends.schema.json"])
+        self.assertEqual(wt.step_timeout(wt.SCHEMAS / "trends.schema.json", True), wt.TRENDS_TIMEOUT)
+
+    def test_buzz_without_its_x_links_is_dropped(self):
+        start, end = D(2026, 11, 9), D(2026, 11, 15)
+        item = {"title": "T", "summary": "S", "category": "modeles", "kind": "fait", "date": "2026-11-10",
+                "source": "Ex", "url": "https://ok.example/a", "other_urls": ["https://x.com/a/status/1"],
+                "importance": 4, "x_buzz": "fort", "x_buzz_notes": "Untel critique le modèle."}
+        checks = {"https://ok.example/a": {"verdict": "ok", "page_date": "2026-11-10"},
+                  "https://x.com/a/status/1": {"verdict": "dead", "reason": "HTTP 404", "page_date": None}}
+        with mock.patch.object(wt, "check_urls", lambda urls: {u: checks[u] for u in urls}):
+            kept, _, _ = wt.validate_items({"codex": {"items": [item]}}, start, end)
+        self.assertEqual((kept[0]["x_buzz"], kept[0]["x_buzz_notes"]), ("inconnu", ""))
+
     def test_trend_page_is_never_impact_evidence(self):
         trend = trend_url(D(2026, 3, 2))
         ev = {"claim": "c", "url": trend, "source": "X", "date": "2026-03-02", "role": "impact"}
@@ -324,6 +363,22 @@ class HelperTests(unittest.TestCase):
                                                                   {**ev, "url": trend, "role": "impact"}]}]}},
                 D(2026, 1, 1), D(2026, 12, 19))
             self.assertEqual(kept, [])
+
+    def test_yearly_perception_trend_must_be_about_ai(self):
+        trend = trend_url(D(2026, 3, 2))
+        perception = {"claim": "c", "url": trend, "source": "X", "date": "2026-03-02", "role": "perception"}
+        impact = {"claim": "c", "url": "https://i.example/1", "source": "I", "date": "2026-11-01", "role": "impact"}
+        topics = {"codex": {"topics": [{"topic": "T", "evidence": [perception, impact]}]}}
+        for x_trend, archived, expected in (({"title": "Le PSG gagne"}, set(), 1),
+                                            ({"title": "OpenAI lance Sora"}, set(), 2),
+                                            ({}, {wt.normalize_url(trend)}, 2)):
+            checks = {trend: {"verdict": "ok" if x_trend else "unverifiable", "page_date": "2026-03-02",
+                              "x_trend": x_trend},
+                      "https://i.example/1": {"verdict": "ok", "page_date": "2026-11-01"}}
+            with self.subTest(x_trend=x_trend), \
+                    mock.patch.object(wt, "check_urls", lambda urls: {u: checks[u] for u in urls}):
+                kept, _, _ = wt.validate_impact(topics, D(2026, 1, 1), D(2026, 12, 19), archived)
+                self.assertEqual(len(kept[0]["evidence"]), expected)
 
     def test_render_refuses_missing_variable(self):
         with self.assertRaises(wt.PipelineError):

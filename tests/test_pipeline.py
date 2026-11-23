@@ -92,7 +92,7 @@ class PipelineTests(unittest.TestCase):
         research = json.loads((self.root / "raw/weekly/2026-11-23/research.validated.json").read_text())
         self.assertEqual(len(research["trends_uncovered"]), 2)
         self.assertIn("- Relevé des tendances X, recherches : 3 tendance(s) IA vérifiée(s) (0 écartée(s)), données"
-                      " comme pistes aux recherches ; 1 couverte(s) par un sujet sourcé, 2 sans source trouvée.", text)
+                      " comme pistes aux recherches ; 1 rattachée(s) à un sujet sourcé, 2 non rattachée(s).", text)
 
         monthly = self.produce("monthly", D(2026, 12, 1))
         inputs = json.loads((self.root / "raw/monthly/2026-12-01/inputs.json").read_text())

@@ -42,7 +42,7 @@ N'écris pas de titre de niveau 1 (le script ajoute l'en-tête). Utilise exactem
 Dans ces sections, une puce par sujet : `- **Titre court** : 1 à 3 phrases. ([Média](url))`. Les usages et l'adoption vont dans « Sociétés et marché » ou « Régulation et société » selon le cas.
 
 ## Ce qui fait parler sur X
-2 à 4 puces, en priorité pour les sujets qui ont des `x_trends`, puis ceux dont `x_buzz` vaut `fort` (à défaut `moyen`). Format : `- **Sujet** : ce qui se dit sur X, en une ou deux phrases. ([Média](url))`, en t'appuyant sur `x_buzz_notes`. Cite les liens qui attestent la discussion (posts X, page tendance, article qui la décrit) plutôt que l'annonce elle-même ; ne nomme une personne que si son post est cité dans la puce. Le sujet peut aussi figurer dans sa section thématique : ici, on décrit la discussion, pas l'événement. Tu peux ajouter au plus deux puces pour des tendances de la liste « Tendances sans source » ci-dessous, si elles concernent un sujet notable : dis que c'est ce que rapporte X et qu'aucune source primaire ni article de presse n'a été trouvé, et cite la page tendance (`X (tendance)`). Omets la section si aucun sujet ne s'y prête.
+2 à 4 puces, en priorité pour les sujets qui ont des `x_trends`, puis ceux dont `x_buzz` vaut `fort` (à défaut `moyen`). Format : `- **Sujet** : ce qui se dit sur X, en une ou deux phrases. ([Média](url))`, en t'appuyant sur `x_buzz_notes`. Cite les liens qui attestent la discussion (posts X, page tendance, article qui la décrit) plutôt que l'annonce elle-même ; ne nomme une personne que si son post est cité dans la puce. Le sujet peut aussi figurer dans sa section thématique : ici, on décrit la discussion, pas l'événement. Tu peux ajouter au plus deux puces pour des tendances de la liste « Tendances non rattachées » ci-dessous, si elles concernent un sujet notable qui ne figure pas déjà dans l'édition : dis que c'est ce que rapporte X et que la tendance n'est rattachée à aucun sujet sourcé de la semaine, et cite la page tendance (`X (tendance)`). Omets la section si aucun sujet ne s'y prête.
 
 ## À surveiller
 2 à 4 puces : suites attendues, dates annoncées, signaux faibles, tirés uniquement de l'entrée, avec source.
@@ -53,8 +53,8 @@ Réponds uniquement avec le markdown, sans bloc de code autour.
 
 {{items_json}}
 
-## Tendances sans source
+## Tendances non rattachées
 
-Tendances X vérifiées (IA, période) qu'aucun sujet retenu ne couvre : la recherche n'a trouvé ni annonce ni article.
+Tendances X vérifiées (IA, période) qu'aucun sujet retenu ne cite. Elles peuvent porter sur un sujet de l'entrée que la recherche a oublié de relier : vérifie avant d'en parler comme d'un sujet à part.
 
 {{trends_json}}

@@ -29,7 +29,7 @@ Les fichiers sont nommés `AAAA-MM-JJ_<newsletter>.md`, d'après leur date de pa
    Les recherches regardent aussi X (Twitter) pour repérer les sujets qui font parler : chaque
    sujet porte une estimation de sa discussion sur X (`x_buzz`), et l'hebdo a une section « Ce qui
    fait parler sur X ». C'est un avis des assistants sur ce qu'ils ont vu, pas une mesure : le
-   pipeline n'a pas accès à l'API de X. Les tendances qu'aucun sujet sourcé ne couvre sont
+   pipeline n'a pas accès à l'API de X. Les tendances qu'aucun sujet sourcé ne cite sont
    publiées dans `raw/` et comptées dans la section « Méthode ».
 2. **Vérification des liens par script, sans IA.** Chaque lien est ouvert : les pages absentes et
    celles datées hors de la période sont écartées. Un lien X doit être un post ou une page
