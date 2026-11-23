@@ -1,0 +1,21 @@
+{
+  "title": "Relevé des tendances X liées à l'IA",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["trends", "notes"],
+  "properties": {
+    "trends": {
+      "type": "array",
+      "items": {
+        "type": "object",
+        "additionalProperties": false,
+        "required": ["url", "subject"],
+        "properties": {
+          "url": {"type": "string", "description": "Page tendance X : https://x.com/i/trending/<identifiant>"},
+          "subject": {"type": "string", "description": "Le sujet IA de la tendance, en une phrase en français"}
+        }
+      }
+    },
+    "notes": {"type": "string", "description": "Remarques : accès à X, requêtes qui n'ont rien donné"}
+  }
+}

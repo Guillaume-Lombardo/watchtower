@@ -21,11 +21,27 @@ def fake_item(i, day):
             "other_urls": [], "importance": 3, "x_buzz": "fort", "x_buzz_notes": "Discuté."}
 
 
+def trend_url(day, n):
+    ms = int(dt.datetime(day.year, day.month, day.day, 12, tzinfo=wt.TZ).timestamp() * 1000)
+    return f"https://x.com/i/trending/{((ms - wt.X_EPOCH_MS) << 22) + n}"
+
+
 def fake_runner(provider):
     def run(prompt, workdir, label, schema, search):
-        if schema and schema.name == "research.schema.json":
+        start = None
+        if search:
             start = D.fromisoformat(wt.re.search(r"\((\d{4}-\d{2}-\d{2}) →", prompt).group(1))
-            return json.dumps({"items": [fake_item(f"{provider}{i}", start) for i in range(10)], "notes": ""})
+        if schema and schema.name == "trends.schema.json":
+            # Les deux fournisseurs voient la même première tendance ; la seconde n'est vue que par un.
+            n = 1 if provider == "codex" else 2
+            return json.dumps({"trends": [{"url": trend_url(start, 0), "subject": "IA"},
+                                          {"url": trend_url(start, n), "subject": "IA"}], "notes": ""})
+        if schema and schema.name == "research.schema.json":
+            items = [fake_item(f"{provider}{i}", start) for i in range(10)]
+            # La recherche rattache la première tendance fournie en piste à un sujet.
+            if (m := wt.re.search(r"https://x\.com/i/trending/\d+", prompt)):
+                items[0]["other_urls"] = [m.group(0)]
+            return json.dumps({"items": items, "notes": ""})
         if schema and schema.name == "impact.schema.json":
             topics = [{"topic": f"T{i}", "category": "modeles", "when": "2026-05", "initial_perception": "p",
                        "hype": 4, "actual_impact": "a", "impact": 2, "verdict": "surestime",
@@ -50,7 +66,9 @@ class PipelineTests(unittest.TestCase):
             mock.patch.object(wt, "RUNS", self.root / "runs"),
             mock.patch.dict(wt.RUNNERS, {"codex": fake_runner("codex"), "claude": fake_runner("claude")}),
             mock.patch.object(wt, "check_urls", lambda urls: {
-                u: {"url": u, "verdict": "ok", "page_date": None, "status": 200, "reason": ""} for u in urls}),
+                u: {"url": u, "verdict": "ok", "page_date": None, "status": 200, "reason": "",
+                    **({"x_trend": {"title": "Nouveau modèle d'IA", "description": "d"}} if "trending" in u else {})}
+                for u in urls}),
             mock.patch.object(wt, "provider_levels", lambda: {}),
             mock.patch.object(wt, "git", lambda *a, **k: ""),
         ]
@@ -69,6 +87,12 @@ class PipelineTests(unittest.TestCase):
         self.assertIn("## Méthode", text)
         self.assertIn("- Signal X (Twitter), recherches : 20 sujet(s) jugé(s) très discuté(s)", text)
         self.assertTrue((self.root / "raw/weekly/2026-11-23/research.validated.json").exists())
+        trends = json.loads((self.root / "raw/weekly/2026-11-23/research.trends.validated.json").read_text())
+        self.assertEqual(len(trends["kept"]), 3)
+        research = json.loads((self.root / "raw/weekly/2026-11-23/research.validated.json").read_text())
+        self.assertEqual(len(research["trends_uncovered"]), 2)
+        self.assertIn("- Relevé des tendances X, recherches : 3 tendance(s) IA vérifiée(s) (0 écartée(s)), données"
+                      " comme pistes aux recherches ; 1 rattachée(s) à un sujet sourcé, 2 non rattachée(s).", text)
 
         monthly = self.produce("monthly", D(2026, 12, 1))
         inputs = json.loads((self.root / "raw/monthly/2026-12-01/inputs.json").read_text())
@@ -82,7 +106,7 @@ class PipelineTests(unittest.TestCase):
         yearly = self.produce("yearly", D(2026, 12, 20))
         text = yearly.read_text()
         self.assertIn("rétrospective 2026", text)
-        self.assertIn("1 édition(s) mensuelle(s), 1 hebdomadaire(s)", text)
+        self.assertIn("1 édition(s) mensuelle(s), 1 hebdomadaire(s), 12 tendance(s) X archivée(s)", text)
 
         for edition in (weekly, monthly, yearly):
             with self.subTest(edition=edition.name):
