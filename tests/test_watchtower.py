@@ -268,7 +268,8 @@ class HelperTests(unittest.TestCase):
     def test_is_ai_related(self):
         for text in ("OpenAI Launches GPT-6.2 Astra", "Anthropic IPO", "Les GPU de Nvidia", "Une IA générative",
                      "AI agents take over", "Claude et Gemini se répondent", "Qwen4-Max released",
-                     "Nvidia earnings", "Grok 4 launches", "Codex CLI gets a new release", "Claude Opus 5.5"):
+                     "Nvidia earnings", "Grok 4 launches", "Codex CLI gets a new release", "Claude Opus 5.5",
+                     "la puce AI5 de Tesla", "les bots Grok de SpaceXAI"):
             with self.subTest(text=text):
                 self.assertTrue(wt.is_ai_related(text))
         for text in ("J'ai vu le match", "Real Madrid wins", "Election results", "Taylor Swift tour", "ai",

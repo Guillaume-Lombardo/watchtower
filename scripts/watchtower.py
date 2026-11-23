@@ -82,13 +82,13 @@ X_TRENDING = re.compile(r"^/i/trending/\d+")
 # Filtre des pages tendances X : on ne garde que celles dont le titre ou le résumé (rendus par X côté serveur)
 # parle d'IA. Sigles en majuscules seulement (« ai » est un mot français) ; noms propres insensibles à la casse,
 # suivis ou non d'un numéro de version (Qwen4, Gemini 4 reste couvert par « gemini »).
-AI_ACRONYMS = re.compile(r"\b(?:AI|IA|AGI|LLMs?|TPUs?|NPUs?)\b")
+AI_ACRONYMS = re.compile(r"\b(?:AI|IA|AGI|LLMs?|TPUs?|NPUs?)\d*\b")  # AI5, LLM…
 # Termes sans ambiguïté : un seul suffit.
 AI_TERMS = re.compile(
     r"\b(?:artificial intelligence|intelligence artificielle|machine learning|deep learning|neural net\w*|"
     r"large language models?|language models?|chatbots?|generative ai|ia g[ée]n[ée]rative|"
     r"open[- ]weights?|open[- ]source models?|superintelligence|ai act|"
-    r"openai|chatgpt|gpt-?\d[\w.]*|anthropic|deepmind|google ai|meta ai|xai|"
+    r"openai|chatgpt|gpt-?\d[\w.]*|anthropic|deepmind|google ai|meta ai|(?:space)?xai|"
     r"qwen|deepseek|zhipu|hugging ?face|stability ai|midjourney|elevenlabs|nvidia|cerebras|"
     r"thinking machines)(?:-?\d[\w.]*)?\b", re.I)
 # Noms de produits qui ont aussi un autre sens (prénom, vent, signe, aviation…) : il en faut deux distincts,
