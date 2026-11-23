@@ -1,0 +1,539 @@
+{
+  "items": [
+    {
+      "title": "OpenAI lance GPT‑6.2 Astra et Sol",
+      "summary": "OpenAI déploie Astra pour les tâches complexes et Sol pour les usages courants dans ChatGPT Work, Codex et l’API. Astra coûte 8 dollars par million de jetons en entrée, 0,40 dollar en entrée mise en cache et 40 dollars en sortie. Sur Agents’ Last Exam, OpenAI mesure un gain de 5,2 points sur GPT‑6 Astra pour un coût par tâche divisé par plus de trois.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-17",
+      "source": "OpenAI",
+      "url": "https://openai.com/index/introducing-gpt-6-2-astra-sol/",
+      "other_urls": [
+        "https://www.techradar.com/tech/openai-just-launched-gpt-6-2-and-its-powerful-enough-to-recreate-the-whole-of-paris-as-a-virtual-world-you-can-explore-in-your-browser"
+      ],
+      "importance": 5
+    },
+    {
+      "title": "Qwen4‑Max ouvre la nouvelle génération d’Alibaba",
+      "summary": "Le modèle multimodal compte 2 400 milliards de paramètres, dont 71 milliards activés par jeton, et accepte un contexte d’un million de jetons. Alibaba l’a mis à disposition sur QwenCloud, QwenWork et QwenStudio. Sur son test interne Work360, le groupe mesure un coût moyen par tâche inférieur d’environ 60 % à celui de Qwen3.8‑Max.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-16",
+      "source": "Alibaba Group",
+      "url": "https://www.alibabagroup.com/en-US/document-2060139246777270272",
+      "other_urls": [
+        "https://bloomberg.com/news/articles/2026-11-16/alibaba-unveils-new-flagship-ai-model-in-riposte-to-us-rivals"
+      ],
+      "importance": 5
+    },
+    {
+      "title": "Gemini 4 Neon vise les tâches longues de développement",
+      "summary": "Google lance un modèle multimodal pour le développement logiciel, les tâches scientifiques et les agents qui enchaînent de nombreux appels d’outils. L’API facture 3 dollars par million de jetons en entrée et 15 dollars en sortie. Google rapporte un score de 65,2 % sur Terminal‑Bench 4.1.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-18",
+      "source": "Google",
+      "url": "https://blog.google/innovation-and-ai/models-and-research/gemini-models/introducing-gemini-4-neon/",
+      "other_urls": [
+        "https://the-decoder.com/google-ships-gemini-4-neon-its-fourth-new-gemini-model-in-a-month/"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Thinking Machines publie les poids d’Inkling 2 Mini",
+      "summary": "Ce modèle à mélange d’experts compte 26,4 milliards de paramètres, dont 3,4 milliards actifs par jeton avant de comptabiliser les passages répétés. Il exécute trois fois ses couches intermédiaires et mobilise environ 20 Go de mémoire selon le laboratoire. Thinking Machines rapporte 48,2 % sur DeepSWE v1.1.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-20",
+      "source": "Thinking Machines Lab",
+      "url": "https://thinkingmachines.ai/news/inkling-2-mini/",
+      "other_urls": [
+        "https://www.marktechpost.com/2026/11/21/thinking-machines-inkling-2-mini-looped-transformer/"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Microsoft élargit sa gamme de modèles spécialisés à Ignite",
+      "summary": "La gamme annoncée comprend notamment MAI Code 2 et Code 2 Flash pour le développement, MAI Image 2.7 pour l’image et MAI Realtime 1 pour les conversations vocales. Microsoft chiffre Realtime 1 à partir de 0,01 dollar par minute audio et indique que MAI Code 2 est déjà proposé dans GitHub Copilot.",
+      "category": "modeles",
+      "kind": "annonce",
+      "date": "2026-11-17",
+      "source": "Microsoft AI",
+      "url": "https://microsoft.ai/news/microsoft-ignite-2026/",
+      "other_urls": [
+        "https://www.axios.com/2026/11/17/microsoft-ai-models-openai-anthropic-ignite"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "SenseTime publie la version finale de SenseNova‑Loop‑9B",
+      "summary": "Le modèle multimodal réutilise deux fois ses couches intermédiaires, ce qui porte le calcul à l’équivalent de 56 couches pour 32 couches physiques. Il accepte jusqu’à 512 000 jetons et ses poids quantifiés sur 4 bits occupent environ 4,9 Go. SenseTime rapporte un score GAIA de 69,90, contre 37,86 pour la préversion d’octobre.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-17",
+      "source": "SenseTime",
+      "url": "https://sensetime.com/en/news/sensenova-loop-9b-release-20261118-1435",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "Kuaishou lance la génération d’images Kling en 8K native",
+      "summary": "Kling Image 4.0 produit des images en 8K native et peut générer jusqu’à dix images coordonnées à partir d’une seule consigne. Kuaishou annonce aussi le rendu de 2 000 caractères dans une même image et la prise en charge de sept langues pour le texte.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-17",
+      "source": "Kling AI",
+      "url": "https://kling.ai/blog/kling-image-4-stunningly-realistic-sharp-precise?tab=all",
+      "other_urls": [
+        "https://www.ithome.com/1/028/563.htm",
+        "https://technode.com/2026/11/18/kuaishou-launches-kling-image-4-0-with-native-8k-generation/"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Reson8 ouvre les poids de son modèle de transcription Rumble‑2‑Flash",
+      "summary": "Le modèle de 500 millions de paramètres est disponible sous licence Apache 2.0 et reconnaît plus de 40 langues. Reson8 indique un taux moyen d’erreur sur les mots de 6,96 % sur le volet multilingue de l’Open ASR Leaderboard, qui couvre neuf langues.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-18",
+      "source": "Reson8 sur Hugging Face",
+      "url": "https://huggingface.co/blog/rumble-2-flash",
+      "other_urls": [
+        "https://siliconangle.com/2026/11/18/reson8-releases-rumble-2-flash-speech-model-as-a-free-open-weights-download/"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Nvidia publie les poids de ses modèles de langage à diffusion continue",
+      "summary": "La famille Nemotron‑Labs‑Sigma comprend 14 jeux de poids de 3 ou 8 milliards de paramètres pour le raisonnement et le code. Les modèles génèrent des blocs de texte par débruitage de représentations continues. Nvidia mesure sur GB200 un débit moyen 3,46 fois plus élevé avec le décodage spéculatif de la variante 8B qu’avec son décodage autorégressif.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-20",
+      "source": "Nvidia Research",
+      "url": "https://research.nvidia.com/labs/genair/sigma/",
+      "other_urls": [
+        "https://www.marktechpost.com/2026/11/20/nvidia-nemotron-labs-sigma-continuous-diffusion-language-model/"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "GPT‑Live 1.1 rejoint l’API vocale d’OpenAI",
+      "summary": "OpenAI ouvre aux développeurs le modèle qui équipe déjà certaines conversations vocales de ChatGPT. Les deux versions de GPT‑Live gagnent un mode veille après 5 à 60 secondes de silence, facturé 0,02 dollar par minute contre 0,05 dollar en mode actif, hors usage du modèle de fond et des outils.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-20",
+      "source": "OpenAI Developer Community",
+      "url": "https://community.openai.com/t/gpt-live-1-1-has-arrived-in-the-api/1418537",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "RadixArk publie DaisyRose‑27B pour les tâches longues",
+      "summary": "Ce dérivé de Qwen3.8‑27B a été entraîné par renforcement sur environ 1 200 tâches, en 18 jours sur 144 GPU H200. Dans l’environnement d’évaluation de RadixArk, le taux de réussite au premier essai sur Terminal‑Bench 4.1 passe de 5,6 % à 12 %.",
+      "category": "modeles",
+      "kind": "fait",
+      "date": "2026-11-18",
+      "source": "RadixArk",
+      "url": "https://www.radixark.com/blog/daisyrose-27b",
+      "other_urls": [],
+      "importance": 2
+    },
+    {
+      "title": "Nvidia prépare le GPU Rubin HPC pour 2028",
+      "summary": "Présenté à SC26, le GPU vise la simulation scientifique et l’analyse de données qui alimentent les agents de recherche. Nvidia annonce plus de 50 000 cœurs CUDA, une accélération des accès aux données creuses et une interconnexion NVLink de septième génération.",
+      "category": "hardware",
+      "kind": "annonce",
+      "date": "2026-11-16",
+      "source": "Nvidia",
+      "url": "https://blogs.nvidia.com/blog/rubin-hpc/",
+      "other_urls": [
+        "https://www.tomshardware.com/pc-components/gpus/nvidia-announces-rubin-hpc-gpu-with-record-number-of-cuda-cores-at-supercomputing-2026-new-chip-accelerates-agentic-hpc-workloads-arrives-in-2028"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "MLPerf ajoute le post-entraînement de grands modèles à ses tests",
+      "summary": "MLCommons publie 250 résultats issus de 153 systèmes, dont 57 dans le cloud. La version 6.1 ajoute un test de post-entraînement sur Qwen3.5‑397B et un nouveau test de recommandation. Douze systèmes alignent au moins 1 000 accélérateurs, avec un maximum de 10 240.",
+      "category": "hardware",
+      "kind": "analyse",
+      "date": "2026-11-16",
+      "source": "MLCommons",
+      "url": "https://mlcommons.org/2026/11/mlperf-training-v6-1-results/",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "Un consortium prépare une gigafactory d’IA nordique et balte",
+      "summary": "Nokia, Nscale, Skeleton, Telia et Verda s’associent pour candidater à l’appel d’offres EuroHPC. Leur projet prévoit de fédérer les capacités de calcul de sites situés en Finlande, en Estonie, en Lettonie et en Suède, en s’appuyant sur plusieurs sources d’énergie décarbonée.",
+      "category": "hardware",
+      "kind": "annonce",
+      "date": "2026-11-16",
+      "source": "Nokia",
+      "url": "https://www.nokia.com/newsroom/european-technology-leaders-form-ai-gigafactory-northern-consortium-to-build-trusted-sustainable-ai-infrastructure/",
+      "other_urls": [
+        "https://www.itpro.com/infrastructure/nokia-and-nscale-team-up-on-new-nordic-ai-compute-consortium"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "OVHcloud étend son offre de calcul et d’inférence en Europe",
+      "summary": "Le groupe présente 55 nouveautés cloud et IA, dont les GPU Nvidia Blackwell B300 et Rubin R200, ainsi qu’une centaine de modèles supplémentaires dans AI Endpoints. OVHcloud estime que ses centres de données pourraient accueillir jusqu’à 60 000 B300 ou 35 000 R200. Il annonce aussi des services d’hébergement d’agents et de recherche documentaire.",
+      "category": "hardware",
+      "kind": "annonce",
+      "date": "2026-11-19",
+      "source": "OVHcloud",
+      "url": "https://corporate.ovhcloud.com/fr-tn/newsroom/news/ovh-ai-turn-55-products/",
+      "other_urls": [
+        "https://www.investing.com/news/stock-market-news/ovhcloud-launches-ai-cloud-products-hosted-in-europe-5038115"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Microsoft choisit l’assemblage de puces Intel EMIB pour Azure",
+      "summary": "Un accord pluriannuel prévoit l’utilisation de la technologie d’assemblage EMIB d’Intel Foundry pour des puces conçues par Microsoft. Il prévoit aussi un approvisionnement en processeurs Xeon, dont la génération Diamond Rapids, et des travaux communs sur la mémoire CXL.",
+      "category": "hardware",
+      "kind": "annonce",
+      "date": "2026-11-17",
+      "source": "Microsoft",
+      "url": "https://news.microsoft.com/source/2026/11/18/microsoft-and-intel-deepen-collaboration-to-deliver-differentiated-azure-infrastructure",
+      "other_urls": [
+        "https://www.tomshardware.com/tech-industry/semiconductors/intel-18a-yields-hit-70-percent-as-company-signs-microsoft-as-emib-customer-the-first-company-to-publicly-commit-to-intels-new-packaging-technology"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "OpenAI et AMD détaillent des gains de conception sur un futur GPU",
+      "summary": "OpenAI rapporte jusqu’à 14 % d’amélioration sur des blocs d’un futur GPU AMD, selon les critères de consommation, de performance et de surface. AMD a intégré certaines modifications à une version envoyée en fabrication. Pour sa propre puce Jalapeño, OpenAI estime les gains de surface des cellules à 13 % sur l’unité vectorielle et 10 % sur l’unité matricielle.",
+      "category": "hardware",
+      "kind": "analyse",
+      "date": "2026-11-18",
+      "source": "OpenAI",
+      "url": "https://openai.com/index/advancing-chip-design-with-our-models/",
+      "other_urls": [
+        "https://www.tomshardware.com/tech-industry/artificial-intelligence/openai-helped-amd-improve-its-upcoming-flagship-gpu-design-by-14-percent-ppa-gpt-models-also-helping-lisa-sus-outfit-boost-its-new-cpus"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Sarvam lance une offre d’inférence hébergée en Inde",
+      "summary": "Token Factory donne accès à plusieurs modèles par une API compatible OpenAI, sur des grappes de GPU situées en Inde. Pour DeepSeek V4.1 Flash, Sarvam affiche un tarif de lancement de 14 roupies par million de jetons en entrée et 55 roupies en sortie sur l’offre standard.",
+      "category": "hardware",
+      "kind": "fait",
+      "date": "2026-11-16",
+      "source": "Sarvam AI",
+      "url": "https://www.sarvam.ai/blogs/sarvam-token-factory",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "Hugging Face confie à OpenRouter le routage des modèles de langage",
+      "summary": "Inference Providers passe par OpenRouter pour choisir un prestataire selon le prix, le débit ou la disponibilité. OpenRouter revendique une couverture de plus de 80 fournisseurs et mesure 46 % d’erreurs de capacité en moins. Hugging Face conserve la facturation directe.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-16",
+      "source": "Hugging Face",
+      "url": "https://huggingface.co/blog/openrouter",
+      "other_urls": [
+        "https://the-decoder.com/hugging-face-now-routes-model-requests-through-openrouter-for-the-best-price-or-speed/"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Mistral réunit ses agents de travail et de code dans Vibe Desktop",
+      "summary": "L’application macOS et Windows réunit Vibe Work et Vibe Code. Elle permet de lancer des sessions de développement en local ou dans un environnement cloud géré, d’isoler les tâches parallèles avec des worktrees Git et d’inspecter les différences de code dans l’interface.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-17",
+      "source": "Mistral AI",
+      "url": "https://docs.mistral.ai/resources/release-notes",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "Microsoft propose sous licence des poids à personnaliser sur Azure",
+      "summary": "MAI Licensed Weights permet aux entreprises d’adapter des modèles Microsoft à leurs données et de les déployer dans leur propre environnement Azure. Parmi les premiers cas présentés, Microsoft indique qu’Alaska Airlines a relevé de 81,2 % à 91,1 % la précision de classification de rapports de maintenance après adaptation.",
+      "category": "logiciel",
+      "kind": "annonce",
+      "date": "2026-11-17",
+      "source": "Microsoft AI",
+      "url": "https://microsoft.ai/news/introducing-mai-licensed-weights/",
+      "other_urls": [
+        "https://www.axios.com/2026/11/17/microsoft-ai-models-openai-anthropic-ignite"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Perplexity unifie l’accès aux modèles avec Orchestrator",
+      "summary": "L’API réunit des modèles propriétaires et à poids ouverts sous une facturation commune. Elle sélectionne automatiquement le prestataire d’inférence selon sa capacité, sa disponibilité et sa latence.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-17",
+      "source": "Perplexity API Platform",
+      "url": "https://community.perplexity.ai/t/introducing-the-perplexity-orchestrator-api/6688",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "Google ouvre Genie 4 aux abonnés Ultra éligibles",
+      "summary": "Project Genie permet de modifier un monde interactif en cours d’exploration avec des consignes textuelles et d’y ajouter du son généré en temps réel. En parallèle, Google fait passer la durée maximale d’une génération Genie 3 de 60 secondes à trois minutes et ajoute l’enchaînement de plusieurs mondes.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-18",
+      "source": "Google DeepMind",
+      "url": "https://blog.google/innovation-and-ai/models-and-research/google-deepmind/genie-4-now-available-project-genie/",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "Gemini peut piloter des applications sur Mac",
+      "summary": "L’assistant peut remplir des formulaires, organiser des fichiers ou préparer une présentation dans des applications de bureau. Le déploiement concerne les comptes personnels adultes abonnés à Google AI Plus, Pro ou Ultra, sur Mac Apple Silicon avec macOS 15 ou ultérieur.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-19",
+      "source": "Google",
+      "url": "https://blog.google/innovation-and-ai/products/gemini-app/computer-use-mac/",
+      "other_urls": [
+        "https://techcrunch.com/2026/11/19/google-gives-gemini-the-ability-to-use-your-mac-for-you/"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "L’API Gemini charge les paramètres des outils à la demande",
+      "summary": "Google lance Tool Retrieval en préversion dans l’API Interactions. Le modèle voit les noms et descriptions des outils, puis charge le schéma complet des paramètres quand il sélectionne un outil. La fonction s’applique aussi aux outils exposés par des serveurs MCP distants.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-19",
+      "source": "Google",
+      "url": "https://blog.google/innovation-and-ai/technology/developers-tools/gemini-api-tool-retrieval/",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "Tencent ouvre le pilotage du bureau dans WorkBuddy",
+      "summary": "L’agent peut interpréter une interface graphique, cliquer, saisir du texte et faire défiler une application en arrière-plan, y compris quand celle-ci est dépourvue d’API. La bêta publique fonctionne sur Windows et macOS à partir de la version 5.11.0 du client.",
+      "category": "logiciel",
+      "kind": "fait",
+      "date": "2026-11-20",
+      "source": "National Business Daily",
+      "url": "https://m.nbd.com.cn/articles/2026-11-20/4654209.html",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "Anthropic boucle une introduction en Bourse de 93,5 milliards de dollars",
+      "summary": "L’action ANT a commencé à coter au Nasdaq le 19 novembre, après un placement à 83 dollars par action. Après exercice intégral de l’option de surallocation, l’offre publique a généré 93,5 milliards de dollars bruts, dont 91,6 milliards pour Anthropic. Un placement privé concomitant a apporté 26 milliards de dollars supplémentaires.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-20",
+      "source": "Anthropic",
+      "url": "https://www.anthropic.com/news/ipo-close",
+      "other_urls": [
+        "https://www.sec.gov/Archives/edgar/data/2130357/000162828026074937/anthropicpbc-fwppricing.htm",
+        "https://www.marketscreener.com/news/anthropic-ipo-haul-rises-to-93-5-billion-after-underwriters-exercise-greenshoe-ce785ed3d880f32c"
+      ],
+      "importance": 5
+    },
+    {
+      "title": "Nvidia double son chiffre d’affaires trimestriel",
+      "summary": "Au troisième trimestre de son exercice 2027, Nvidia réalise 115,8 milliards de dollars de chiffre d’affaires, en hausse de 103 % sur un an. Les centres de données représentent 107,6 milliards, en hausse de 110 %. Lors de la présentation des résultats, le conseil a confirmé que Colette Kress assurait la direction par intérim et a écarté un retour de Jensen Huang au poste de directeur général.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-17",
+      "source": "Nvidia",
+      "url": "https://investor.nvidia.com/news/press-release-details/2026/NVIDIA-Announces-Financial-Results-for-Third-Quarter-Fiscal-2027/default.aspx",
+      "other_urls": [
+        "https://apnews.com/article/3026bcbe04ab57b844884382e583422a"
+      ],
+      "importance": 5
+    },
+    {
+      "title": "Le cloud d’Alibaba progresse de 53 % sur un an",
+      "summary": "La branche AI Cloud and Compute Services atteint 61 milliards de yuans de chiffre d’affaires sur le trimestre clos fin septembre. Ses ventes aux clients externes progressent de 64 %. Alibaba indique que les revenus de ses produits liés à l’IA affichent une croissance à trois chiffres pour le treizième trimestre consécutif.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-19",
+      "source": "Alibaba Group",
+      "url": "https://home.alibabagroup.com/en-US/document-2060213191907999744",
+      "other_urls": [
+        "https://www.streetinsider.com/Reuters/Chinas%2BAlibaba%2Bbeats%2Bquarterly%2Brevenue%2Bestimates/27372165.html"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Palo Alto Networks signe le rachat d’Applied Compute pour 4,5 milliards de dollars",
+      "summary": "L’accord prévoit un paiement entièrement en actions et reste soumis aux autorisations habituelles. Applied Compute fournit une plateforme de post-entraînement et d’inférence pour modèles à poids ouverts. La clôture est prévue au troisième trimestre de l’exercice 2027 de Palo Alto Networks.",
+      "category": "societes",
+      "kind": "annonce",
+      "date": "2026-11-18",
+      "source": "Palo Alto Networks",
+      "url": "https://www2.paloaltonetworks.com/company/press/2026/palo-alto-networks-to-acquire-applied-compute--bringing-secure-open-weight-ai-to-the-enterprise",
+      "other_urls": [
+        "https://www.investing.com/news/stock-market-news/palo-alto-raises-annual-forecast-signs-45-billion-deal-for-applied-compute-5037460"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "ElevenLabs signe un accord pour reprendre le japonais Kotoba",
+      "summary": "ElevenLabs veut s’appuyer sur le laboratoire fondé en 2023 pour développer ses modèles vocaux et ses agents en japonais. Le groupe prévoit une clôture au quatrième trimestre 2026 sous réserve des autorisations requises. La presse spécialisée rapporte un prix d’environ 100 millions de dollars, attribué au directeur général d’ElevenLabs.",
+      "category": "societes",
+      "kind": "annonce",
+      "date": "2026-11-16",
+      "source": "ElevenLabs",
+      "url": "https://elevenlabs.io/blog/kotoba",
+      "other_urls": [
+        "https://www.musicbusinessworldwide.com/elevenlabs-agrees-to-acquire-japan-focused-voice-ai-company-kotoba-in-reported-100m-deal/",
+        "https://www.watch.impress.co.jp/docs/news/2156921.html"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Model ML lève 250 millions de dollars pour automatiser le travail financier",
+      "summary": "General Atlantic et QED Investors codirigent cette série B, qui valorise Model ML à 1,5 milliard de dollars. La société automatise la préparation de documents et d’analyses pour les banques d’investissement, les gestionnaires d’actifs et les cabinets de conseil.",
+      "category": "societes",
+      "kind": "fait",
+      "date": "2026-11-17",
+      "source": "FT Partners",
+      "url": "https://ftpartners.com/transactions/model-ml-250",
+      "other_urls": [
+        "https://techcrunch.com/2026/11/17/model-ml-raises-250m-to-automate-investment-banking-grunt-work/?trk=public_post_comment-text"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Salesforce et Microsoft rapprochent leurs outils commerciaux",
+      "summary": "Copilotforce doit intégrer les données clients et certaines actions de Salesforce Sales Cloud dans Microsoft Copilot et Teams. L’accord prévoit aussi l’accès bidirectionnel aux données entre Salesforce Data 360 et Microsoft Fabric sans duplication des jeux de données. Accenture participe à la conception et sert de premier client.",
+      "category": "societes",
+      "kind": "annonce",
+      "date": "2026-11-17",
+      "source": "Salesforce",
+      "url": "https://www.salesforce.com/news/stories/copilotforce-announcement/",
+      "other_urls": [
+        "https://www.techradar.com/pro/salesforce-and-microsoft-team-up-for-copilotforce-bringing-a-new-world-of-ai-insights-to-your-customer-data"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Cognition discuterait d’une levée à 75 milliards de dollars de valorisation",
+      "summary": "Bloomberg rapporte que l’éditeur de l’agent de code Devin envisage de lever au moins 2 milliards de dollars, selon des personnes proches des discussions. Les négociations sont en cours et la valorisation évoquée se compare aux 48 milliards de dollars du tour de septembre.",
+      "category": "societes",
+      "kind": "rumeur",
+      "date": "2026-11-20",
+      "source": "Bloomberg via Yahoo Finance",
+      "url": "https://finance.yahoo.com/technology/ai/articles/cognition-talks-75-billion-value-204755865.html",
+      "other_urls": [
+        "https://www.streetinsider.com/Reuters/Cognition%2Bin%2Btalks%2Bfor%2Bnew%2Bfunding%2Bat%2B%2475%2Bbillion%2Bvaluation%2C%2BBloomberg%2BNews%2Breports/27381853.html"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "Levent Alpöge soumet une preuve de l’hypothèse de Riemann élaborée avec Claude",
+      "summary": "Le mathématicien d’Anthropic présente un argument qui s’étend à l’hypothèse généralisée pour les fonctions L de Dirichlet. La communauté Lean a publié une vérification indépendante de la formalisation et de sa correspondance avec les énoncés attendus. L’examen mathématique de l’argument se poursuit.",
+      "category": "recherche",
+      "kind": "annonce",
+      "date": "2026-11-20",
+      "source": "Levent Alpöge",
+      "url": "https://alpo.ge/remark.pdf",
+      "other_urls": [
+        "https://github.com/leanprover-community/riemann-hypothesis",
+        "https://www.lemonde.fr/sciences/article/2026/11/21/la-probable-resolution-de-l-hypothese-de-riemann-par-une-intelligence-artificielle-marque-une-bascule-pour-les-mathematiques_6813962_1650684.html"
+      ],
+      "importance": 5
+    },
+    {
+      "title": "METR mesure un écart entre autonomie des agents et jugement expert",
+      "summary": "Sur la suite de tests combinée de METR, la durée des tâches qu’un modèle réussit avec une probabilité de 50 % double environ tous les 3,6 mois. Les modèles égalent souvent les humains qualifiés sur les tâches de code et d’optimisation du jeu d’essai. Les experts gardent l’avantage quand il faut trancher avec peu de retours empiriques.",
+      "category": "recherche",
+      "kind": "analyse",
+      "date": "2026-11-20",
+      "source": "METR",
+      "url": "https://metr.org/blog/2026-11-20-q4-2026-capability-update/",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "Huawei présente un modèle action-monde pour robots sur Ascend",
+      "summary": "CloudRobo‑WM1.2 couple la prédiction de l’environnement et la génération d’actions pour les robots. Huawei Cloud annonce une publication en open source et revendique la première place sur RoboTwin 2.0 et LIBERO‑Pro 2.0.",
+      "category": "recherche",
+      "kind": "annonce",
+      "date": "2026-11-16",
+      "source": "Huawei Cloud",
+      "url": "https://www.huaweicloud.com/news/2026/20261116171910882.html",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "MAWAM coordonne plusieurs bras robotiques dans un même modèle",
+      "summary": "La prépublication décrit un modèle qui prédit conjointement les images futures et les actions de chaque robot. Les auteurs mesurent 67,8 % de réussite moyenne sur trois tâches physiques, soit 18,9 points de plus que leur modèle de comparaison. En simulation, le taux atteint 90,3 % sur huit tâches avec jusqu’à quatre bras.",
+      "category": "recherche",
+      "kind": "analyse",
+      "date": "2026-11-18",
+      "source": "Xianzhe Fan et al., arXiv",
+      "url": "https://arxiv.org/abs/2611.25105",
+      "other_urls": [],
+      "importance": 3
+    },
+    {
+      "title": "Washington restreint l’accès distant aux puces d’IA avancées",
+      "summary": "Une règle provisoire du Bureau of Industry and Security cible les centres de données étrangers qui fournissent à distance d’importantes capacités de calcul à des entreprises établies dans des juridictions visées, dont la Chine. Elle prévoit aussi des licences pour certaines exportations vers cinq pays, dont Singapour, la Malaisie et le Brésil. Le texte est entré en vigueur le 19 novembre.",
+      "category": "regulation",
+      "kind": "fait",
+      "date": "2026-11-19",
+      "source": "Federal Register",
+      "url": "https://www.govinfo.gov/content/pkg/FR-2026-11-19/html/2026-23529.htm",
+      "other_urls": [
+        "https://apnews.com/article/60f868d3bb430b85a8657b27d421096e",
+        "https://www.mofo.com/resources/insights/261119-bis-issues-interim-final-rule"
+      ],
+      "importance": 5
+    },
+    {
+      "title": "La Californie poursuit OpenAI au sujet de ses essais de sécurité",
+      "summary": "Le procureur général Rob Bonta a saisi la Cour supérieure de San Francisco après l’incident ayant touché Hugging Face en juillet. La plainte allègue qu’OpenAI a testé des modèles avancés avec des garde-fous insuffisants et évoque au moins 80 incidents. L’État demande au tribunal d’imposer des changements aux pratiques de l’entreprise.",
+      "category": "regulation",
+      "kind": "fait",
+      "date": "2026-11-16",
+      "source": "Département de la justice de Californie",
+      "url": "https://oag.ca.gov/news/press-releases/it%E2%80%99s-golden-state-not-wild-west-attorney-general-bonta-sues-openai-over",
+      "other_urls": [
+        "https://apnews.com/article/1dd7be56134b4f09fb2fb974803edc69"
+      ],
+      "importance": 4
+    },
+    {
+      "title": "Le Conseil de l’UE adopte des conclusions sur les compétences en IA",
+      "summary": "Les États membres appellent à intégrer la maîtrise de l’IA dans l’éducation, à mieux former les enseignants et à développer la formation continue. Les conclusions insistent sur l’esprit critique, l’usage responsable des outils et l’accès aux compétences pour l’ensemble de la population.",
+      "category": "regulation",
+      "kind": "fait",
+      "date": "2026-11-19",
+      "source": "Conseil de l’Union européenne",
+      "url": "https://www.consilium.europa.eu/fr/press/press-releases/2026/11/19/equipping-europeans-for-the-age-of-ai-council-approves-conclusions/",
+      "other_urls": [
+        "https://2eu.brussels/en/news/eu-council-calls-for-ai-ready-education-teacher-training-and-lifelong-reskilling"
+      ],
+      "importance": 3
+    },
+    {
+      "title": "OpenRouter retire trois fournisseurs après des incidents de traitement des données",
+      "summary": "À la suite de signalements concernant plusieurs prestataires d’inférence, OpenRouter annonce avoir exclu trois fournisseurs et retiré à 125 points d’accès leur éligibilité à la politique de conservation nulle des données. Le service dit avoir averti les clients potentiellement touchés et vérifie si certaines requêtes et réponses ont été transmises à des tiers.",
+      "category": "usages",
+      "kind": "fait",
+      "date": "2026-11-22",
+      "source": "OpenRouter",
+      "url": "https://openrouter.ai/blog/announcements/data-processing-incidents-on-inference-providers/",
+      "other_urls": [],
+      "importance": 4
+    },
+    {
+      "title": "Gallup mesure une progression de l’usage fréquent de l’IA au travail",
+      "summary": "Dans une enquête auprès de 21 648 salariés américains, 32 % disent utiliser l’IA au moins quelques fois par semaine, soit deux points de plus qu’au trimestre précédent, et 16 % disent l’utiliser quotidiennement. Parmi les utilisateurs fréquents, 52 % déclarent passer moins de temps à rechercher ou à réunir des informations.",
+      "category": "usages",
+      "kind": "analyse",
+      "date": "2026-11-16",
+      "source": "Gallup",
+      "url": "https://www.gallup.com/workplace/716585/ai-changing-employees-spend-time-work.aspx",
+      "other_urls": [],
+      "importance": 3
+    }
+  ],
+  "notes": "La sélection couvre la France, l’Europe nordique et balte, la Chine, le Japon et l’Inde en plus des États-Unis. La couverture reste plus mince sur l’énergie, la mémoire, le droit d’auteur et les marchés africains et latino-américains. Les scores issus des fournisseurs sont attribués à leurs auteurs. La date de Kling Image 4.0 correspond au lancement rapporté par la presse chinoise le 17 novembre, suivi du billet officiel en anglais le 18. Pour l’introduction d’Anthropic, le montant retenu est celui de la clôture après surallocation. La publication des poids de Nemotron‑Labs‑Sigma constitue l’actualité de la semaine et le préprint est antérieur."
+}
