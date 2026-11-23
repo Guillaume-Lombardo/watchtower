@@ -40,7 +40,7 @@ N'écris pas de titre de niveau 1 (le script ajoute l'en-tête). Utilise exactem
 Dans ces sections, une puce par sujet : `- **Titre court** : 1 à 3 phrases. ([Média](url))`. Les usages et l'adoption vont dans « Sociétés et marché » ou « Régulation et société » selon le cas.
 
 ## Ce qui fait parler sur X
-2 à 4 puces, uniquement pour des sujets dont `x_buzz` vaut `fort` (à défaut `moyen`). Format : `- **Sujet** : ce qui se dit sur X, en une ou deux phrases. ([Média](url))`, en t'appuyant sur `x_buzz_notes`. Le sujet peut aussi figurer dans sa section thématique : ici, on décrit la discussion, pas l'événement. Omets la section si aucun sujet ne s'y prête.
+2 à 4 puces, uniquement pour des sujets dont `x_buzz` vaut `fort` (à défaut `moyen`). Format : `- **Sujet** : ce qui se dit sur X, en une ou deux phrases. ([Média](url))`, en t'appuyant sur `x_buzz_notes`. Cite les liens qui attestent la discussion (posts X, page tendance, article qui la décrit) plutôt que l'annonce elle-même ; ne nomme une personne que si son post est cité dans la puce. Le sujet peut aussi figurer dans sa section thématique : ici, on décrit la discussion, pas l'événement. Omets la section si aucun sujet ne s'y prête.
 
 ## À surveiller
 2 à 4 puces : suites attendues, dates annoncées, signaux faibles, tirés uniquement de l'entrée, avec source.

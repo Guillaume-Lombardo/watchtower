@@ -37,7 +37,7 @@ Périmètre, par ordre de priorité :
 - `source` : nom du média ou de l'éditeur de `url`.
 - `importance` : de 1 (anecdotique) à 5 (majeur pour le secteur).
 - `x_buzz` : à quel point le sujet a été discuté sur X pendant la période. `fort` : très discuté (nombreux posts et reprises, ou article de presse qui décrit la viralité) ; `moyen` : discussion visible ; `faible` : peu de posts vus ; `inconnu` : tu n'as rien pu voir. Base-toi sur ce que tu as vu, pas sur l'importance du sujet ; dans le doute, `inconnu`.
-- `x_buzz_notes` : une phrase sur ce qui se dit sur X (réactions, critiques, démonstrations, ce qui est contesté), vide si `x_buzz` vaut `faible` ou `inconnu`.
+- `x_buzz_notes` : une phrase sur ce qui se dit sur X (réactions, critiques, démonstrations, ce qui est contesté), vide si `x_buzz` vaut `faible` ou `inconnu`. Ce que tu y écris doit être visible dans une page de `url` ou `other_urls` (post X, page tendance, article qui décrit la discussion) : ajoute-la. Ne nomme une personne que si son post y figure. Aucun nombre de vues, de likes ou de republications.
 - `notes` : tes remarques sur la recherche (thèmes peu couverts, doutes, sujets écartés faute de source, accès à X limité).
 
 Réponds uniquement avec l'objet JSON demandé.
