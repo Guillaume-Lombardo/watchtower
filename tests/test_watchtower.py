@@ -172,6 +172,65 @@ class HelperTests(unittest.TestCase):
         self.assertEqual(stats["both"], 1)
         self.assertEqual(len(rejected), 3)
 
+    def test_x_post_date_comes_from_the_post_id(self):
+        self.assertEqual(wt.x_post_date("https://x.com/elonmusk/status/1585341984679469056"), D(2022, 10, 26))
+        self.assertEqual(wt.x_post_date("https://twitter.com/a/status/1585341984679469056?s=20"), D(2022, 10, 26))
+        self.assertEqual(wt.x_post_date("https://x.com/i/trending/2122753845734547691"), D(2026, 11, 17))
+        self.assertIsNone(wt.x_post_date("https://x.com/OpenAI"))
+        self.assertIsNone(wt.x_post_date("https://news.example/a/status/1585341984679469056"))
+
+    def test_x_links_other_than_posts_are_refused_without_fetching(self):
+        with mock.patch.object(wt.urllib.request, "urlopen", side_effect=AssertionError("pas de requête")):
+            for url in ("https://x.com/OpenAI", "https://x.com/search?q=gpt", "https://x.com/explore/tabs/trending",
+                        "https://x.com/i/trending",
+                        "https://t.co/abc123"):
+                with self.subTest(url=url):
+                    self.assertEqual(wt.check_url(url)["verdict"], "dead")
+
+    def test_x_post_keeps_the_date_of_its_id(self):
+        class Resp:
+            status, headers = 200, {"Content-Type": "text/html"}
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+            def read(self, n): return b'<meta property="article:published_time" content="2026-11-20">'
+        with mock.patch.object(wt.urllib.request, "urlopen", return_value=Resp()):
+            res = wt.check_url("https://x.com/elonmusk/status/1585341984679469056")
+        self.assertEqual((res["verdict"], res["page_date"]), ("ok", "2022-10-26"))
+
+    def test_x_buzz_is_merged_and_counted(self):
+        start, end = D(2026, 11, 9), D(2026, 11, 15)
+        item = {"title": "T", "summary": "S", "category": "modeles", "kind": "fait", "date": "2026-11-10",
+                "source": "Ex", "url": "https://ok.example/a", "other_urls": ["https://x.com/lab/status/1"],
+                "importance": 4, "x_buzz": "moyen", "x_buzz_notes": "Court."}
+        results = {"codex": {"items": [item]},
+                   "claude": {"items": [{**item, "x_buzz": "fort", "x_buzz_notes": "Plus long, avec détail."},
+                                        {**item, "url": "https://ok.example/b", "x_buzz": "énorme"}]}}
+        checks = {"https://ok.example/a": {"verdict": "ok", "page_date": "2026-11-10"},
+                  "https://ok.example/b": {"verdict": "ok", "page_date": "2026-11-10"},
+                  "https://x.com/lab/status/1": {"verdict": "ok", "page_date": "2026-11-10"}}
+        with mock.patch.object(wt, "check_urls", lambda urls: {u: checks[u] for u in urls}):
+            kept, _, stats = wt.validate_items(results, start, end)
+        by_url = {e["url"]: e for e in kept}
+        self.assertEqual((by_url["https://ok.example/a"]["x_buzz"], by_url["https://ok.example/a"]["x_buzz_notes"]),
+                         ("fort", "Plus long, avec détail."))
+        self.assertEqual(by_url["https://ok.example/b"]["x_buzz"], "inconnu")
+        self.assertEqual((stats["x_buzz"], stats["x_posts"]), (1, 2))
+
+    def test_x_trending_page_never_becomes_the_main_source(self):
+        start, end = D(2026, 11, 16), D(2026, 11, 22)
+        trend = "https://x.com/i/trending/2122753845734547691"
+        item = {"title": "T", "summary": "S", "category": "modeles", "kind": "fait", "date": "2026-11-17",
+                "source": "OpenAI", "url": trend, "other_urls": ["https://ok.example/a"], "importance": 4}
+        checks = {trend: {"verdict": "ok", "page_date": "2026-11-17"},
+                  "https://ok.example/a": {"verdict": "ok", "page_date": "2026-11-17"},
+                  "https://dead.example/b": {"verdict": "dead", "reason": "HTTP 404", "page_date": None}}
+        results = {"codex": {"items": [item, {**item, "url": "https://dead.example/b", "other_urls": [trend]}]}}
+        with mock.patch.object(wt, "check_urls", lambda urls: {u: checks[u] for u in urls}):
+            kept, rejected, _ = wt.validate_items(results, start, end)
+        self.assertEqual([(e["url"], e["other_urls"], e["source"]) for e in kept],
+                         [("https://ok.example/a", [trend], "ok.example")])
+        self.assertEqual([r["reason"] for r in rejected], ["seule source : une page tendance X"])
+
     def test_render_refuses_missing_variable(self):
         with self.assertRaises(wt.PipelineError):
             wt.render("synthesis-weekly.md", period="x")

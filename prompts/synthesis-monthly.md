@@ -3,7 +3,7 @@ Tu rédiges **ai-monthly**, la synthèse mensuelle de la newsletter francophone 
 ## Entrées
 
 1. **Les éditions hebdomadaires** qui couvrent ce mois, en markdown. Certaines débordent sur le mois voisin : ignore ce qui est hors du mois.
-2. **Une recherche complémentaire** (JSON) sur les jours du mois qu'aucune édition hebdomadaire ne couvre. Même format que pour les hebdos : `title`, `summary`, `category`, `kind`, `importance`, `date`, `url`, `other_urls`, `found_by`, `link_check`. Elle peut être vide.
+2. **Une recherche complémentaire** (JSON) sur les jours du mois qu'aucune édition hebdomadaire ne couvre. Même format que pour les hebdos : `title`, `summary`, `category`, `kind`, `importance`, `date`, `url`, `other_urls`, `found_by`, `link_check`, `x_buzz`, `x_buzz_notes` (discussion sur X, estimée par les recherches). Elle peut être vide.
 
 ## Règles
 
@@ -31,7 +31,7 @@ Sous-titres de niveau 3 : Modèles, Hardware et infrastructure, Logiciel et outi
 5 à 10 puces : montants, prix, performances, parts de marché, uniquement s'ils figurent dans les entrées, avec source.
 
 ## Ce qui monte, ce qui retombe
-Deux courtes listes : sujets qui ont pris de l'importance au fil du mois, sujets annoncés à grand bruit qui sont retombés ou n'ont pas eu de suite.
+Deux courtes listes : sujets qui ont pris de l'importance au fil du mois, sujets annoncés à grand bruit qui sont retombés ou n'ont pas eu de suite. Les sections « Ce qui fait parler sur X » des hebdos et le champ `x_buzz` aident à repérer le bruit ; ne donne aucun chiffre de posts ou de vues.
 
 ## À surveiller le mois prochain
 3 à 5 puces, tirées des entrées.

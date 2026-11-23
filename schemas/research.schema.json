@@ -9,7 +9,7 @@
       "items": {
         "type": "object",
         "additionalProperties": false,
-        "required": ["title", "summary", "category", "kind", "date", "source", "url", "other_urls", "importance"],
+        "required": ["title", "summary", "category", "kind", "date", "source", "url", "other_urls", "importance", "x_buzz", "x_buzz_notes"],
         "properties": {
           "title": {"type": "string", "description": "Titre court en français, reformulé"},
           "summary": {"type": "string", "description": "2 à 4 phrases factuelles en français"},
@@ -19,7 +19,9 @@
           "source": {"type": "string", "description": "Nom du média ou de l'éditeur"},
           "url": {"type": "string", "description": "Source la plus primaire, page vue pendant la recherche"},
           "other_urls": {"type": "array", "items": {"type": "string"}, "description": "0 à 3 sources complémentaires"},
-          "importance": {"type": "integer", "description": "1 (anecdotique) à 5 (majeur)"}
+          "importance": {"type": "integer", "description": "1 (anecdotique) à 5 (majeur)"},
+          "x_buzz": {"type": "string", "enum": ["fort", "moyen", "faible", "inconnu"], "description": "Discussion du sujet sur X (Twitter) pendant la période, d'après ce qui a été vu"},
+          "x_buzz_notes": {"type": "string", "description": "Une phrase sur ce qui se dit sur X, vide si faible ou inconnu"}
         }
       }
     },

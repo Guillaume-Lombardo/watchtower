@@ -70,6 +70,14 @@ MOIS = ["janvier", "février", "mars", "avril", "mai", "juin", "juillet", "août
 USER_AGENT = "Mozilla/5.0 (X11; Linux x86_64; rv:140.0) Gecko/20100101 Firefox/140.0 link-checker/1.0"
 # Codes HTTP qui signalent un site qui bloque les robots plutôt qu'une page absente.
 BLOCKED_CODES = {401, 402, 403, 405, 406, 408, 425, 429, 451, 999}
+# Liens X (Twitter) : l'identifiant d'un post ou d'une page tendance encode sa date (« snowflake »,
+# millisecondes depuis l'époque X). Les pages tendances (/i/trending/<id>) sont des résumés générés par X :
+# elles attestent qu'un sujet a fait parler, sans être une source primaire.
+X_HOSTS = {"x.com", "twitter.com", "mobile.twitter.com", "mobile.x.com"}
+X_STATUS = re.compile(r"^/(?:[A-Za-z0-9_]{1,15}/status(?:es)?|i/web/status|i/trending)/(\d{6,20})(?:/|$)")
+X_TRENDING = re.compile(r"^/i/trending/\d+")
+X_EPOCH_MS = 1288834974657
+BUZZ_LEVELS = ["inconnu", "faible", "moyen", "fort"]
 TRACKING_PARAMS = re.compile(r"^(utm_|fbclid$|gclid$|mc_|ref$|ref_src$|cmpid$|ocid$|guccounter$)")
 
 
@@ -459,12 +467,28 @@ def extract_page_date(body: str) -> dt.date | None:
     return from_meta(PUBLISHED_META) or (parse_day(m.group(1)) if m else None) or from_meta(OTHER_DATE_META)
 
 
+def x_post_date(url: str) -> dt.date | None:
+    """Date (heure de Paris) d'un post ou d'une page tendance X, tirée de son identifiant ; sinon None."""
+    p = urllib.parse.urlsplit(url)
+    if host_of(url) not in X_HOSTS or not (m := X_STATUS.match(p.path)):
+        return None
+    ms = (int(m.group(1)) >> 22) + X_EPOCH_MS
+    return dt.datetime.fromtimestamp(ms / 1000, dt.timezone.utc).astimezone(TZ).date()
+
+
 def check_url(url: str) -> dict:
     """ok : page lue ; unverifiable : le site bloque les robots ou ne répond pas ; dead : absente."""
     res = {"url": url, "status": None, "verdict": "dead", "reason": "", "page_date": None}
     if not re.match(r"^https?://[^/\s]+\.[^/\s]+", url or ""):
         res["reason"] = "URL invalide"
         return res
+    if host_of(url) in X_HOSTS or host_of(url) == "t.co":
+        # Seuls les posts et les pages tendances datées sont acceptés : un profil ou une recherche ne datent rien.
+        day = x_post_date(url)
+        if day is None:
+            res["reason"] = "lien X qui n'est ni un post ni une page tendance (profil, recherche, lien raccourci)"
+            return res
+        res["page_date"] = day.isoformat()
     for attempt in (1, 2):
         try:
             req = urllib.request.Request(url, headers={
@@ -475,7 +499,7 @@ def check_url(url: str) -> dict:
                 ctype = resp.headers.get("Content-Type", "")
                 body = resp.read(600_000).decode("utf-8", errors="replace") if "html" in ctype else ""
             res["verdict"], res["reason"] = "ok", ""
-            if (d := extract_page_date(body)):
+            if not res["page_date"] and (d := extract_page_date(body)):
                 res["page_date"] = d.isoformat()
             return res
         except urllib.error.HTTPError as exc:
@@ -509,7 +533,10 @@ def check_urls(urls: set[str]) -> dict[str, dict]:
 
 
 def host_of(url: str) -> str:
-    host = (urllib.parse.urlsplit(url).hostname or "").lower()
+    try:
+        host = (urllib.parse.urlsplit(url).hostname or "").lower()
+    except ValueError:
+        return ""
     return host[4:] if host.startswith("www.") else host
 
 
@@ -518,6 +545,17 @@ def importance(value) -> int:
         return max(1, min(5, int(value)))
     except (TypeError, ValueError):
         return 3
+
+
+def is_x_trending(url: str) -> bool:
+    try:
+        return host_of(url) in X_HOSTS and bool(X_TRENDING.match(urllib.parse.urlsplit(url).path))
+    except ValueError:
+        return False
+
+
+def buzz(value) -> str:
+    return value if value in BUZZ_LEVELS else "inconnu"
 
 
 def in_window(day: dt.date | None, start: dt.date, end: dt.date, before: int, after: int) -> bool:
@@ -546,9 +584,13 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
         url = str(item.get("url", "")).strip()
         others = [str(u).strip() for u in item.get("other_urls", []) or [] if str(u).strip()]
         candidates = [u for u in [url, *others] if u and usable(u)]
+        # Une page tendance X complète une source, elle ne la remplace pas.
+        candidates.sort(key=is_x_trending)
         claimed = parse_day(str(item.get("date", "")))
         reason = None
-        if not candidates:
+        if candidates and is_x_trending(candidates[0]):
+            reason = "seule source : une page tendance X"
+        elif not candidates:
             c = checks.get(url, {})
             if c.get("verdict") == "dead":
                 reason = f"lien mort ({c.get('reason')})"
@@ -581,6 +623,8 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
                 "other_urls": extra,
                 "found_by": [provider],
                 "link_check": checks[main]["verdict"],
+                "x_buzz": buzz(item.get("x_buzz")),
+                "x_buzz_notes": str(item.get("x_buzz_notes") or "").strip(),
             }
         else:
             if provider not in entry["found_by"]:
@@ -588,6 +632,12 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
             if len(item.get("summary", "")) > len(entry["summary"]):
                 entry["summary"] = item["summary"].strip()
             entry["importance"] = max(entry["importance"], importance(item.get("importance")))
+            level = buzz(item.get("x_buzz"))
+            if BUZZ_LEVELS.index(level) > BUZZ_LEVELS.index(entry["x_buzz"]):
+                entry["x_buzz"] = level
+            notes = str(item.get("x_buzz_notes") or "").strip()
+            if len(notes) > len(entry["x_buzz_notes"]):
+                entry["x_buzz_notes"] = notes
             for u in extra:
                 if normalize_url(u) not in {normalize_url(x) for x in [entry["url"], *entry["other_urls"]]}:
                     entry["other_urls"].append(u)
@@ -600,6 +650,8 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
         "both": sum(1 for e in kept if len(e["found_by"]) > 1),
         "unverifiable": sum(1 for e in kept if e["link_check"] == "unverifiable"),
         "rejected": len(rejected),
+        "x_buzz": sum(1 for e in kept if e["x_buzz"] == "fort"),
+        "x_posts": sum(1 for e in kept if any(host_of(u) in X_HOSTS for u in [e["url"], *e["other_urls"]])),
     }
     return kept, rejected, stats
 
@@ -766,6 +818,11 @@ def method_section(ed: Edition, stats_by_step: dict[str, dict], writer: str, mis
             + (f", {st['unverifiable']} liens non vérifiables automatiquement (site qui bloque les robots)"
                if st.get("unverifiable") else "")
             + f" ; écartés : {st['rejected']} (lien mort ou hors période).")
+        if st.get("x_buzz") or st.get("x_posts"):
+            lines.append(
+                f"- Signal X (Twitter), {step.lower()} : {st.get('x_buzz', 0)} sujet(s) jugé(s) très discuté(s) par les recherches,"
+                f" {st.get('x_posts', 0)} citant un lien X. Estimation des assistants à partir de ce qu'ils ont vu"
+                " en ligne, pas une mesure.")
     if missing:
         lines.append(f"- Fournisseur absent pour ce passage : {', '.join(missing)}.")
     if extra:
