@@ -76,6 +76,19 @@ BLOCKED_CODES = {401, 402, 403, 405, 406, 408, 425, 429, 451, 999}
 X_HOSTS = {"x.com", "twitter.com", "mobile.twitter.com", "mobile.x.com"}
 X_STATUS = re.compile(r"^/(?:[A-Za-z0-9_]{1,15}/status(?:es)?|i/web/status|i/trending)/(\d{6,20})(?:/|$)")
 X_TRENDING = re.compile(r"^/i/trending/\d+")
+# Filtre des pages tendances X : on ne garde que celles dont le titre ou le résumé (rendus par X côté serveur)
+# parle d'IA. Sigles en majuscules seulement (« ai » est un mot français) ; noms propres insensibles à la casse,
+# suivis ou non d'un numéro de version (Qwen4, Gemini 4 reste couvert par « gemini »).
+AI_ACRONYMS = re.compile(r"\b(?:AI|IA|AGI|LLMs?|GPUs?|TPUs?|NPUs?|RAG)\b")
+AI_TERMS = re.compile(
+    r"\b(?:artificial intelligence|intelligence artificielle|machine learning|deep learning|neural net\w*|"
+    r"large language models?|language models?|chatbots?|generative|g[ée]n[ée]rati(?:f|ve)s?|"
+    r"open[- ]weights?|open[- ]source models?|benchmarks?|datacenters?|data centers?|"
+    r"openai|chatgpt|gpt-?\d[\w.]*|sora|codex|anthropic|claude|gemini|deepmind|google ai|grok|xai|"
+    r"meta ai|llama|mistral|qwen|deepseek|kimi|moonshot|minimax|zhipu|glm|baidu ernie|ernie|"
+    r"copilot|cursor|windsurf|perplexity|hugging ?face|stability ai|midjourney|runway|elevenlabs|"
+    r"nvidia|blackwell|rubin|cuda|tsmc|cerebras|groq|thinking machines|safe superintelligence|"
+    r"superintelligence|humanoids?|robotics?|robots?|ai act)(?:-?\d[\w.]*)?\b", re.I)
 X_EPOCH_MS = 1288834974657
 BUZZ_LEVELS = ["inconnu", "faible", "moyen", "fort"]
 TRACKING_PARAMS = re.compile(r"^(utm_|fbclid$|gclid$|mc_|ref$|ref_src$|cmpid$|ocid$|guccounter$)")
@@ -476,6 +489,25 @@ def x_post_date(url: str) -> dt.date | None:
     return dt.datetime.fromtimestamp(ms / 1000, dt.timezone.utc).astimezone(TZ).date()
 
 
+def meta_content(body: str, name: str) -> str:
+    for tag in re.finditer(r"<meta[^>]+>", body):
+        if re.search(rf"""(?:property|name)\s*=\s*["']{re.escape(name)}["']""", tag.group(0), re.I):
+            if (m := re.search(r'content\s*=\s*"([^"]*)"', tag.group(0)) or
+                    re.search(r"content\s*=\s*'([^']*)'", tag.group(0))):
+                return html.unescape(m.group(1)).strip()
+    return ""
+
+
+def x_trend_text(body: str) -> dict:
+    """Titre et résumé d'une page tendance X, tels que X les rend côté serveur."""
+    return {"title": meta_content(body, "og:title"),
+            "description": meta_content(body, "og:description") or meta_content(body, "description")}
+
+
+def is_ai_related(text: str) -> bool:
+    return bool(AI_ACRONYMS.search(text) or AI_TERMS.search(text))
+
+
 def check_url(url: str) -> dict:
     """ok : page lue ; unverifiable : le site bloque les robots ou ne répond pas ; dead : absente."""
     res = {"url": url, "status": None, "verdict": "dead", "reason": "", "page_date": None}
@@ -489,6 +521,9 @@ def check_url(url: str) -> dict:
             res["reason"] = "lien X qui n'est ni un post ni une page tendance (profil, recherche, lien raccourci)"
             return res
         res["page_date"] = day.isoformat()
+        trending = is_x_trending(url)
+    else:
+        trending = False
     for attempt in (1, 2):
         try:
             req = urllib.request.Request(url, headers={
@@ -499,6 +534,8 @@ def check_url(url: str) -> dict:
                 ctype = resp.headers.get("Content-Type", "")
                 body = resp.read(600_000).decode("utf-8", errors="replace") if "html" in ctype else ""
             res["verdict"], res["reason"] = "ok", ""
+            if trending:
+                res["x_trend"] = x_trend_text(body)
             if not res["page_date"] and (d := extract_page_date(body)):
                 res["page_date"] = d.isoformat()
             return res
@@ -572,9 +609,19 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
         urls.update(str(u).strip() for u in item.get("other_urls", []) or [])
     checks = check_urls({u for u in urls if u})
 
+    def ai_trend(url: str) -> bool:
+        """Une page tendance X ne compte que si le script a pu la lire et qu'elle parle d'IA."""
+        c = checks.get(url) or {}
+        trend = c.get("x_trend") or {}
+        return c.get("verdict") == "ok" and is_ai_related(f"{trend.get('title', '')} {trend.get('description', '')}")
+
+    off_topic = sorted(u for u in checks if is_x_trending(u) and checks[u]["verdict"] != "dead" and not ai_trend(u))
+
     def usable(url: str) -> bool:
         c = checks.get(url)
         if not c or c["verdict"] == "dead":
+            return False
+        if is_x_trending(url) and not ai_trend(url):
             return False
         return in_window(parse_day(c["page_date"] or ""), start, end, before=3, after=1)
 
@@ -594,6 +641,8 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
             c = checks.get(url, {})
             if c.get("verdict") == "dead":
                 reason = f"lien mort ({c.get('reason')})"
+            elif url in off_topic:
+                reason = "page tendance X illisible ou sans rapport avec l'IA"
             elif c:
                 reason = f"page datée du {c.get('page_date')}, hors période"
             else:
@@ -642,6 +691,10 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
                 if normalize_url(u) not in {normalize_url(x) for x in [entry["url"], *entry["other_urls"]]}:
                     entry["other_urls"].append(u)
     kept = sorted(merged.values(), key=lambda e: (-len(e["found_by"]), -e["importance"], e["category"]))
+    for entry in kept:
+        # Titre et résumé des pages tendances, lus par le script : la synthèse s'appuie dessus pour décrire le buzz.
+        entry["x_trends"] = [{"url": u, **checks[u]["x_trend"]} for u in [entry["url"], *entry["other_urls"]]
+                             if is_x_trending(u) and checks.get(u, {}).get("x_trend")]
     for i, entry in enumerate(kept, 1):
         entry["id"] = f"S{i}"
     stats = {
@@ -652,6 +705,8 @@ def validate_items(results: dict[str, dict], start: dt.date, end: dt.date) -> tu
         "rejected": len(rejected),
         "x_buzz": sum(1 for e in kept if e["x_buzz"] == "fort"),
         "x_posts": sum(1 for e in kept if any(host_of(u) in X_HOSTS for u in [e["url"], *e["other_urls"]])),
+        "x_trends": len({t["url"] for e in kept for t in e["x_trends"]}),
+        "x_trends_off_topic": len(off_topic),
     }
     return kept, rejected, stats
 
@@ -818,11 +873,12 @@ def method_section(ed: Edition, stats_by_step: dict[str, dict], writer: str, mis
             + (f", {st['unverifiable']} liens non vérifiables automatiquement (site qui bloque les robots)"
                if st.get("unverifiable") else "")
             + f" ; écartés : {st['rejected']} (lien mort ou hors période).")
-        if st.get("x_buzz") or st.get("x_posts"):
+        if st.get("x_buzz") or st.get("x_posts") or st.get("x_trends_off_topic"):
             lines.append(
-                f"- Signal X (Twitter), {step.lower()} : {st.get('x_buzz', 0)} sujet(s) jugé(s) très discuté(s) par les recherches,"
-                f" {st.get('x_posts', 0)} citant un lien X. Estimation des assistants à partir de ce qu'ils ont vu"
-                " en ligne, pas une mesure.")
+                f"- Signal X (Twitter), {step.lower()} : {st.get('x_buzz', 0)} sujet(s) jugé(s) très discuté(s)"
+                f" par les recherches (estimation, pas une mesure), {st.get('x_posts', 0)} citant un lien X ;"
+                f" pages tendances X retenues : {st.get('x_trends', 0)}, écartées par le filtre IA :"
+                f" {st.get('x_trends_off_topic', 0)}.")
     if missing:
         lines.append(f"- Fournisseur absent pour ce passage : {', '.join(missing)}.")
     if extra:

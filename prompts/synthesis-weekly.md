@@ -9,6 +9,7 @@ La liste JSON en fin de message contient les sujets retenus. Deux recherches ind
 - `found_by` : la ou les recherches qui ont trouvé le sujet (deux = sujet confirmé par les deux) ;
 - `link_check` : `ok` (page lue par le script) ou `unverifiable` (le site bloque les robots, lien non vérifié) ;
 - `x_buzz` (`fort`, `moyen`, `faible`, `inconnu`) et `x_buzz_notes` : à quel point le sujet a été discuté sur X (Twitter), estimé par les recherches à partir de ce qu'elles ont vu, et ce qui s'y dit.
+- `x_trends` : les pages tendances X liées au sujet, avec le titre et le résumé que X en donne, relus par le script et filtrées pour ne garder que l'IA. Ce résumé est rédigé par X : reformule-le, et présente ce qu'il rapporte comme « selon le résumé de X ».
 
 ## Règles
 
@@ -40,7 +41,7 @@ N'écris pas de titre de niveau 1 (le script ajoute l'en-tête). Utilise exactem
 Dans ces sections, une puce par sujet : `- **Titre court** : 1 à 3 phrases. ([Média](url))`. Les usages et l'adoption vont dans « Sociétés et marché » ou « Régulation et société » selon le cas.
 
 ## Ce qui fait parler sur X
-2 à 4 puces, uniquement pour des sujets dont `x_buzz` vaut `fort` (à défaut `moyen`). Format : `- **Sujet** : ce qui se dit sur X, en une ou deux phrases. ([Média](url))`, en t'appuyant sur `x_buzz_notes`. Cite les liens qui attestent la discussion (posts X, page tendance, article qui la décrit) plutôt que l'annonce elle-même ; ne nomme une personne que si son post est cité dans la puce. Le sujet peut aussi figurer dans sa section thématique : ici, on décrit la discussion, pas l'événement. Omets la section si aucun sujet ne s'y prête.
+2 à 4 puces, en priorité pour les sujets qui ont des `x_trends`, puis ceux dont `x_buzz` vaut `fort` (à défaut `moyen`). Format : `- **Sujet** : ce qui se dit sur X, en une ou deux phrases. ([Média](url))`, en t'appuyant sur `x_buzz_notes`. Cite les liens qui attestent la discussion (posts X, page tendance, article qui la décrit) plutôt que l'annonce elle-même ; ne nomme une personne que si son post est cité dans la puce. Le sujet peut aussi figurer dans sa section thématique : ici, on décrit la discussion, pas l'événement. Omets la section si aucun sujet ne s'y prête.
 
 ## À surveiller
 2 à 4 puces : suites attendues, dates annoncées, signaux faibles, tirés uniquement de l'entrée, avec source.

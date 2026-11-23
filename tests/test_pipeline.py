@@ -67,7 +67,7 @@ class PipelineTests(unittest.TestCase):
         text = weekly.read_text()
         self.assertIn("period_start: 2026-11-16", text)
         self.assertIn("## Méthode", text)
-        self.assertIn("- Signal X (Twitter), recherches : 20 sujet(s)", text)
+        self.assertIn("- Signal X (Twitter), recherches : 20 sujet(s) jugé(s) très discuté(s)", text)
         self.assertTrue((self.root / "raw/weekly/2026-11-23/research.validated.json").exists())
 
         monthly = self.produce("monthly", D(2026, 12, 1))

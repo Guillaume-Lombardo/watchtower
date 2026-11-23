@@ -221,7 +221,8 @@ class HelperTests(unittest.TestCase):
         trend = "https://x.com/i/trending/2122753845734547691"
         item = {"title": "T", "summary": "S", "category": "modeles", "kind": "fait", "date": "2026-11-17",
                 "source": "OpenAI", "url": trend, "other_urls": ["https://ok.example/a"], "importance": 4}
-        checks = {trend: {"verdict": "ok", "page_date": "2026-11-17"},
+        checks = {trend: {"verdict": "ok", "page_date": "2026-11-17",
+                          "x_trend": {"title": "OpenAI Launches GPT-6.2", "description": "New models."}},
                   "https://ok.example/a": {"verdict": "ok", "page_date": "2026-11-17"},
                   "https://dead.example/b": {"verdict": "dead", "reason": "HTTP 404", "page_date": None}}
         results = {"codex": {"items": [item, {**item, "url": "https://dead.example/b", "other_urls": [trend]}]}}
@@ -230,6 +231,55 @@ class HelperTests(unittest.TestCase):
         self.assertEqual([(e["url"], e["other_urls"], e["source"]) for e in kept],
                          [("https://ok.example/a", [trend], "ok.example")])
         self.assertEqual([r["reason"] for r in rejected], ["seule source : une page tendance X"])
+        self.assertEqual(kept[0]["x_trends"], [{"url": trend, "title": "OpenAI Launches GPT-6.2",
+                                                "description": "New models."}])
+
+    def test_x_trends_without_ai_are_filtered(self):
+        start, end = D(2026, 11, 16), D(2026, 11, 22)
+        ai = "https://x.com/i/trending/2122753845734547691"
+        off = "https://x.com/i/trending/2122753845734547692"
+        blocked = "https://x.com/i/trending/2122753845734547693"
+        item = {"title": "T", "summary": "S", "category": "modeles", "kind": "fait", "date": "2026-11-17",
+                "source": "Ex", "url": "https://ok.example/a", "other_urls": [ai, off, blocked], "importance": 4}
+        checks = {"https://ok.example/a": {"verdict": "ok", "page_date": "2026-11-17"},
+                  ai: {"verdict": "ok", "page_date": "2026-11-17",
+                       "x_trend": {"title": "Nvidia beats estimates", "description": "Data center sales."}},
+                  off: {"verdict": "ok", "page_date": "2026-11-17",
+                        "x_trend": {"title": "Real Madrid wins", "description": "Mbappé scores twice."}},
+                  blocked: {"verdict": "unverifiable", "page_date": "2026-11-17", "reason": "HTTP 429"}}
+        results = {"codex": {"items": [item, {**item, "url": off, "other_urls": []}]}}
+        with mock.patch.object(wt, "check_urls", lambda urls: {u: checks[u] for u in urls}):
+            kept, rejected, stats = wt.validate_items(results, start, end)
+        self.assertEqual(kept[0]["other_urls"], [ai])
+        self.assertEqual([t["title"] for t in kept[0]["x_trends"]], ["Nvidia beats estimates"])
+        self.assertEqual([r["reason"] for r in rejected], ["page tendance X illisible ou sans rapport avec l'IA"])
+        self.assertEqual((stats["x_trends"], stats["x_trends_off_topic"]), (1, 2))
+
+    def test_is_ai_related(self):
+        for text in ("OpenAI Launches GPT-6.2 Astra", "Anthropic IPO", "Les GPU de Nvidia", "Une IA générative",
+                     "AI agents take over", "Proof of Riemann hypothesis with Claude", "Qwen4-Max released"):
+            with self.subTest(text=text):
+                self.assertTrue(wt.is_ai_related(text))
+        for text in ("J'ai vu le match", "Real Madrid wins", "Election results", "Taylor Swift tour", "ai"):
+            with self.subTest(text=text):
+                self.assertFalse(wt.is_ai_related(text))
+
+    def test_x_trend_page_text_is_read(self):
+        body = ('<title>OpenAI Launches GPT-6.2 / X</title>'
+                '<meta property="og:title" content="OpenAI Launches GPT-6.2 &amp; Sol"/>'
+                '<meta name="description" content="Short."/>'
+                '<meta property="og:description" content="Critics like developer Theo call it verbose; OpenAI&#x27;s team replies."/>')
+
+        class Resp:
+            status, headers = 200, {"Content-Type": "text/html"}
+            def __enter__(self): return self
+            def __exit__(self, *a): return False
+            def read(self, n): return body.encode()
+        with mock.patch.object(wt.urllib.request, "urlopen", return_value=Resp()):
+            res = wt.check_url("https://x.com/i/trending/2122753845734547691")
+        self.assertEqual(res["x_trend"], {"title": "OpenAI Launches GPT-6.2 & Sol",
+                                          "description": "Critics like developer Theo call it verbose; OpenAI's team replies."})
+        self.assertEqual(res["page_date"], "2026-11-17")
 
     def test_render_refuses_missing_variable(self):
         with self.assertRaises(wt.PipelineError):

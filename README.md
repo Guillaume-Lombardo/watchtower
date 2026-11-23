@@ -28,9 +28,10 @@ Les fichiers sont nommés `AAAA-MM-JJ_<newsletter>.md`, d'après leur date de pa
    fait parler sur X ». C'est un avis des assistants sur ce qu'ils ont vu, pas une mesure : le
    pipeline n'a pas accès à l'API de X.
 2. **Vérification des liens par script, sans IA.** Chaque lien est ouvert : les pages absentes et
-   celles datées hors de la période sont écartées. Un lien X doit être un post : sa date est lue
-   dans son identifiant. Les sites qui bloquent les robots sont gardés mais signalés comme « non
-   vérifiables ».
+   celles datées hors de la période sont écartées. Un lien X doit être un post ou une page
+   tendance, dont la date est lue dans l'identifiant ; une page tendance n'est gardée que si son
+   titre ou son résumé parle d'IA (liste de termes dans le script). Les sites qui bloquent les
+   robots sont gardés mais signalés comme « non vérifiables ».
 3. **Synthèse.** Un assistant rédige l'édition à partir des seuls sujets retenus. Le script refuse
    toute édition qui cite un lien absent des sujets vérifiés.
 4. **Traçabilité.** Les réponses brutes des deux recherches, les sujets retenus et les sujets
